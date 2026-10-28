@@ -1,8 +1,9 @@
+import * as G from './ui-grid.js';import * as F from './files.js';import {store,undo,redo} from './data.js';
 // StatLab – Phase 0 shell. كل عنصر: [عربي, English, اختصار, أمر, مرحلة]
 const S='-';
 const MENUS=[
-['ملف','File',[['جديد','New','Ctrl+N',null,1],['فتح بيانات...','Open Data...','Ctrl+O',null,1],['حفظ','Save','Ctrl+S',null,1],S,['استيراد CSV / Excel','Import CSV / Excel','',null,1],['تصدير...','Export...','',null,3],S,['طباعة','Print','Ctrl+P','print',0]]],
-['تحرير','Edit',[['تراجع','Undo','Ctrl+Z',null,1],['إعادة','Redo','Ctrl+Y',null,1],S,['نسخ','Copy','Ctrl+C',null,1],['لصق','Paste','Ctrl+V',null,1],S,['بحث...','Find...','Ctrl+F',null,1]]],
+['ملف','File',[['جديد','New','','new',0],['فتح / استيراد (CSV, Excel, مشروع)...','Open / Import...','Ctrl+O','open',0],['حفظ المشروع','Save project','Ctrl+S','save',0],S,['تصدير CSV','Export CSV','','exportCsv',0],['بيانات تجريبية (100 ألف صف)','Demo data (100k rows)','','demo',0],S,['طباعة','Print','Ctrl+P','print',0]]],
+['تحرير','Edit',[['تراجع','Undo','Ctrl+Z','undo',0],['إعادة','Redo','Ctrl+Y','redo',0],S,['نسخ','Copy','Ctrl+C','copy',0],['لصق','Paste','Ctrl+V','paste',0],S,['بحث...','Find...','Ctrl+F',null,2]]],
 ['عرض','View','',null],
 ['بيانات','Data','',null],
 ['تحويل','Transform','',null],
@@ -47,19 +48,6 @@ function close(){document.querySelectorAll('.menu.open').forEach(x=>x.classList.
 document.addEventListener('click',close);
 function buildToolbar(){const t=$('#toolbar');t.innerHTML='';TB.forEach(i=>{if(i==='|'){const s=document.createElement('span');s.className='sep';t.append(s);return}
  const b=document.createElement('button');b.textContent=i[0];b.title=i[1];b.onclick=()=>run([i[1],i[1],'',ACT[i[1]]?i[1]:null,i[1]==='compute'?1:i[1]==='analyze'?2:i[1]==='graphs'?4:1]);t.append(b)})}
-// ---- الشبكة (هيكل فقط في المرحلة 0) ----
-const ROWS=60,COLS=14,colName=i=>'var'+(i+1);
-function buildGrid(){const g=$('#grid');let h='<thead><tr><th></th>';for(let c=0;c<COLS;c++)h+=`<th>${colName(c)}</th>`;h+='</tr></thead><tbody>';
- for(let r=0;r<ROWS;r++){h+=`<tr><th>${r+1}</th>`;for(let c=0;c<COLS;c++)h+=`<td contenteditable="true" data-r="${r}" data-c="${c}"></td>`;h+='</tr>'}g.innerHTML=h+'</tbody>';
- g.addEventListener('focusin',e=>{const td=e.target.closest('td');if(!td)return;$('#cellRef').textContent=`${+td.dataset.r+1} : ${colName(+td.dataset.c)}`;$('#cellInput').value=td.textContent});
- g.addEventListener('keydown',e=>{const td=e.target.closest('td');if(!td)return;const r=+td.dataset.r,c=+td.dataset.c;let n=null;
-  if(e.key==='Enter'||e.key==='ArrowDown')n=[r+1,c];else if(e.key==='ArrowUp')n=[r-1,c];else if(e.key==='Tab')n=[r,c+(e.shiftKey?-1:1)];
-  if(n){e.preventDefault();const x=g.querySelector(`td[data-r="${n[0]}"][data-c="${n[1]}"]`);x&&x.focus()}});
- const v=$('#varGrid');const hd=['Name','Type','Width','Decimals','Label','Values','Missing','Columns','Align','Measure','Role'];
- let vh='<thead><tr><th></th>'+hd.map(x=>`<th>${x}</th>`).join('')+'</tr></thead><tbody>';
- for(let c=0;c<COLS;c++)vh+=`<tr><th>${c+1}</th><td>${colName(c)}</td><td>Numeric</td><td>8</td><td>2</td><td></td><td>None</td><td>None</td><td>8</td><td>Right</td><td>Scale</td><td>Input</td></tr>`;
- v.innerHTML=vh+'</tbody>'}
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));const d=b.dataset.view==='data';$('#grid').hidden=!d;$('#varGrid').hidden=d});
 // ---- لوحة الأوامر ----
 let sel=0,items=[];
 function openPal(){$('#palette').hidden=false;$('#palInput').value='';filter();$('#palInput').focus()}
@@ -73,9 +61,11 @@ document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();
  if((e.ctrlKey||e.metaKey)&&k==='k'){e.preventDefault();openPal()}
  else if((e.ctrlKey||e.metaKey)&&e.shiftKey&&k==='d'){e.preventDefault();ACT.theme()}
  else if((e.ctrlKey||e.metaKey)&&e.shiftKey&&k==='l'){e.preventDefault();ACT.lang()}
- else if(k==='escape')close()});
+ else if((e.ctrlKey||e.metaKey)&&k==='s'){e.preventDefault();ACT.save()}else if((e.ctrlKey||e.metaKey)&&k==='o'){e.preventDefault();ACT.open()}else if(k==='escape')close()});
 // ---- PWA ----
 let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#btnInstall').hidden=false});
 $('#btnInstall').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;$('#btnInstall').hidden=true}};
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
-buildGrid();applyLook();
+Object.assign(ACT,{new:F.newDoc,open:F.openDialog,save:F.save,exportCsv:F.exportCsv,demo:F.demo,undo:()=>{undo()},redo:()=>{redo()},copy:G.copy,paste:G.paste});
+applyLook();G.init();
+addEventListener('beforeunload',e=>{if(store.dirty){e.preventDefault();e.returnValue=''}});

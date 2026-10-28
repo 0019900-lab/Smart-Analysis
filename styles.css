@@ -39,3 +39,21 @@ td:focus{outline:2px solid var(--acc);outline-offset:-2px;background:var(--acc2)
 #palList li{display:flex;justify-content:space-between;padding:8px 12px;border-radius:6px;cursor:pointer}
 #palList li.sel{background:var(--acc2)}
 @media(max-width:800px){#outputPane{display:none}}
+/* ---- Phase 1 ---- */
+#gridWrap{position:relative;direction:ltr;outline:0}
+#grid{table-layout:fixed}
+#grid td,#grid th,#varGrid td,#varGrid th{box-sizing:border-box;padding:0 8px;height:26px;min-width:0;overflow:hidden;text-overflow:ellipsis;line-height:25px}
+#grid td.n{text-align:right}
+#grid td.rg{background:var(--acc2)}
+#grid td.cur{outline:2px solid var(--acc);outline-offset:-2px;background:var(--panel)}
+thead th.corner{left:0;z-index:3}
+th.undef{opacity:.35}
+tr.sp td{padding:0!important;border:0!important}
+#cellEditor{position:absolute;z-index:5;height:26px;border:2px solid var(--acc);padding:0 6px;font:inherit;background:var(--panel);color:var(--text);outline:0;box-sizing:border-box}
+#cellEditor[hidden]{display:none}
+#varGrid td{min-width:90px;padding:0}
+#varGrid input,#varGrid select{width:100%;height:26px;border:0;background:transparent;color:inherit;font:inherit;padding:0 8px;outline:0}
+#varGrid input:focus,#varGrid select:focus{background:var(--acc2)}
+#varGrid input:disabled{opacity:.3}
+#varGrid td:nth-child(2) input{min-width:140px}#varGrid td:nth-child(6) input,#varGrid td:nth-child(7) input,#varGrid td:nth-child(8) input{min-width:130px}
+#info{font-variant-numeric:tabular-nums}
