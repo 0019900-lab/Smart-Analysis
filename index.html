@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StatLab</title>
+<meta name="theme-color" content="#2f6fed">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header id="titlebar"><span class="logo">◈</span><b>StatLab</b><span id="docname">Untitled1 [DataSet1]</span>
+  <button id="btnInstall" hidden>تثبيت</button></header>
+<nav id="menubar" role="menubar"></nav>
+<div id="toolbar" role="toolbar"></div>
+<main id="workspace">
+  <section id="dataPane">
+    <div id="formulaBar"><span id="cellRef">1 : var1</span><input id="cellInput" disabled></div>
+    <div id="gridWrap"><table id="grid"></table><table id="varGrid" hidden></table></div>
+    <div id="tabs"><button class="tab active" data-view="data">Data View</button><button class="tab" data-view="var">Variable View</button></div>
+  </section>
+  <aside id="outputPane"><h3 data-i18n="output">المخرجات</h3><div id="outputBody" class="empty">النتائج هتظهر هنا</div></aside>
+</main>
+<footer id="statusbar"><span id="status">المحرك جاهز</span><span id="hint">Ctrl+K للبحث عن أي أمر</span></footer>
+<div id="palette" hidden><div class="box"><input id="palInput" placeholder="ابحث عن أمر أو تحليل..."><ul id="palList"></ul></div></div>
+<script type="module" src="app.js"></script>
+</body></html>
