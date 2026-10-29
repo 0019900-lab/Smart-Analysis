@@ -1,4 +1,4 @@
-// StatLab – مكتبة أيقونات SVG (24px، خط 1.8، ثنائية اللون: خط + تعبئة شفافة)
+// Smart-Analysis – مكتبة أيقونات SVG (24px، خط 1.8، ثنائية اللون: خط + تعبئة شفافة)
 const P={
 new:'<path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" class="f"/><path d="M14 3v5h5M12 11v6M9 14h6"/>',
 open:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1H3z" class="f"/><path d="M3 10h18l-1.6 8.2a2 2 0 0 1-2 1.6H6.6a2 2 0 0 1-2-1.6z"/>',
@@ -45,8 +45,10 @@ note:'<path d="M5 3h14v14l-4 4H5z" class="f"/><path d="M15 21v-4h4M8 8h8M8 12h5"
 star:'<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" class="f"/>',
 clock:'<circle cx="12" cy="12" r="9" class="f"/><path d="M12 7v5l3 2"/>',
 cmd:'<rect x="3" y="4" width="18" height="16" rx="3" class="f"/><path d="m7 9 3 3-3 3M12 15h5"/>',
+sun:'<circle cx="12" cy="12" r="4.2" class="f"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>',
+learn:'<path d="M12 7c-1.7-1.6-4.3-2.2-8-2.2v12.4c3.7 0 6.3.6 8 2.2 1.7-1.6 4.3-2.2 8-2.2V10" class="f"/><path d="M12 7v12.4M12 7c-1.7-1.6-4.3-2.2-8-2.2v12.4c3.7 0 6.3.6 8 2.2 1.7-1.6 4.3-2.2 8-2.2V10"/><path d="M18.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
 cog:'<circle cx="12" cy="12" r="3" class="f"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
 export const names=Object.keys(P);
 export const ic=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]||P.info}</svg>`;
-// علامة StatLab المتجهة (أعمدة + مدار) للاستخدام بحجم صغير
-export const mark=(s=26)=>`<svg class="mark" width="${s}" height="${s}" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="sl-g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#14b8ff"/><stop offset=".55" stop-color="#3b5bff"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs><g fill="url(#sl-g)"><rect x="6" y="28" width="7" height="12" rx="2"/><rect x="16" y="22" width="7" height="18" rx="2"/><rect x="26" y="16" width="7" height="24" rx="2"/><rect x="36" y="8" width="7" height="32" rx="2"/></g><path d="M4 36C12 44 30 40 42 26c3-4 4-8 1-10" fill="none" stroke="url(#sl-g)" stroke-width="3" stroke-linecap="round" opacity=".85"/></svg>`;
+// علامة Smart-Analysis (الحرف S والأعمدة) كصورة شفافة
+export const mark=(s=26)=>`<img class="mark" src="assets/mark.png" alt="" height="${s}" style="height:${s}px;width:auto">`;

@@ -1,43 +1,45 @@
 import * as G from './ui-grid.js';import * as F from './files.js';import {store,undo,redo} from './data.js';import {A} from './analyses.js';
-import {initOutput,addText,clearOutput,EXPORT} from './output.js';import {T} from './i18n.js';import {ic,mark} from './icons.js';
+import {initOutput,addText,clearOutput,EXPORT} from './output.js';import {T} from './i18n.js';import {letter} from './keys.js';import {ic,mark} from './icons.js';
 import {initGuide,openGuide,undocumented} from './guide.js';import {showWelcome,showAbout} from './welcome.js';import {openFind,closeFind} from './find.js';
-// StatLab – القوائم. كل عنصر: [عربي, English, اختصار, أمر, مرحلة] — مرحلة 0 = قريباً بدون موعد محدد
+// Smart-Analysis – القوائم. كل عنصر: [عربي, English, اختصار, أمر, مرحلة] — مرحلة 0 = قريباً بدون موعد محدد
 const S='-';
 const MENUS=[
-['ملف','File',[['جديد','New','','new',0],['فتح / استيراد (CSV, Excel, مشروع)...','Open / Import (CSV, Excel, project)...','Ctrl+O','open',0],['حفظ المشروع','Save project','Ctrl+S','save',0],S,['تصدير المخرجات: HTML','Export output: HTML','','exportHtml',3],['تصدير المخرجات: Word','Export output: Word','','exportWord',3],['تصدير المخرجات: PDF','Export output: PDF','','exportPdf',3],['تصدير المخرجات: Markdown','Export output: Markdown','','exportMd',3],['تصدير الجداول: Excel','Export tables: Excel','','exportXlsx',3],S,['تصدير البيانات: CSV','Export data: CSV','','exportCsv',0],['بيانات تجريبية (100 ألف صف)','Demo data (100k rows)','','demo',0],S,['طباعة','Print','Ctrl+P','print',0]]],
+['ملف','File',[['جديد','New','Alt+N','new',0],['فتح / استيراد (CSV, Excel, مشروع)...','Open / Import (CSV, Excel, project)...','Ctrl+O','open',0],['حفظ المشروع','Save project','Ctrl+S','save',0],S,['تصدير المخرجات: HTML','Export output: HTML','','exportHtml',3],['تصدير المخرجات: Word','Export output: Word','','exportWord',3],['تصدير المخرجات: PDF','Export output: PDF','','exportPdf',3],['تصدير المخرجات: Markdown','Export output: Markdown','','exportMd',3],['تصدير الجداول: Excel','Export tables: Excel','','exportXlsx',3],S,['تصدير البيانات: CSV','Export data: CSV','','exportCsv',0],['بيانات تجريبية (100 ألف صف)','Demo data (100k rows)','','demo',0],S,['طباعة','Print','Ctrl+P','print',0]]],
 ['تحرير','Edit',[['تراجع','Undo','Ctrl+Z','undo',0],['إعادة','Redo','Ctrl+Y','redo',0],S,['نسخ','Copy','Ctrl+C','copy',0],['لصق','Paste','Ctrl+V','paste',0],S,['بحث...','Find...','Ctrl+F','find',3],['إضافة ملاحظة للمخرجات','Add note to output','','addText',3]]],
 ['عرض','View','',null],['بيانات','Data','',null],['تحويل','Transform','',null],['تحليل','Analyze','',null],['رسوم','Graphs','',null],['أدوات','Utilities','',null],['إضافات','Extensions','',null],['نافذة','Window','',null],['مساعدة','Help','',null]];
 const D={
-'عرض':[['الوضع الداكن / الفاتح','Dark / Light mode','Ctrl+Shift+D','theme',0],['اللغة: عربي / English','Language: Arabic / English','Ctrl+Shift+L','lang',0],['لوحة الأوامر','Command palette','Ctrl+K','palette',0],['إظهار / إخفاء المخرجات','Show / hide output','Ctrl+Shift+O','pane',0],['نافذة المخرجات الكبيرة','Wide output window','','outputWide',3],['شاشة الترحيب','Welcome screen','','welcome',3]],
-'بيانات':[['تعريف خصائص المتغير','Define Variable Properties','',null,0],['ترتيب الحالات','Sort Cases','',null,0],['دمج الملفات','Merge Files','',null,0],['تقسيم الملف','Split File','',null,0],['اختيار الحالات','Select Cases','',null,0],['ترجيح الحالات','Weight Cases','',null,0]],
-'تحويل':[['حساب متغير','Compute Variable','',null,0],['إعادة ترميز','Recode','',null,0],['تصنيف بصري (Binning)','Visual Binning','',null,0],['استبدال القيم المفقودة','Replace Missing Values','',null,0]],
+'عرض':[['الوضع الداكن / الفاتح','Dark / Light mode','Alt+D','theme',0],['اللغة: عربي / English','Language: Arabic / English','Alt+L','lang',0],['لوحة الأوامر','Command palette','Ctrl+K','palette',0],['إظهار / إخفاء المخرجات','Show / hide output','Alt+O','pane',0],['نافذة المخرجات الكبيرة','Wide output window','Alt+W','outputWide',3],['شاشة الترحيب','Welcome screen','','welcome',3]],
+'بيانات':[['تعريف خصائص المتغير','Define Variable Properties','',null,5],['ترتيب الحالات','Sort Cases','',null,5],['دمج الملفات','Merge Files','',null,5],['تقسيم الملف','Split File','',null,5],['اختيار الحالات','Select Cases','',null,5],['ترجيح الحالات','Weight Cases','',null,5]],
+'تحويل':[['حساب متغير','Compute Variable','',null,5],['إعادة ترميز','Recode','',null,5],['تصنيف بصري (Binning)','Visual Binning','',null,5],['استبدال القيم المفقودة','Replace Missing Values','',null,5]],
 'تحليل':[['التكرارات','Frequencies','','frequencies',0],['الإحصاء الوصفي','Descriptives','','descriptives',0],['الجداول التقاطعية','Crosstabs','','crosstabs',0],S,['اختبار T لعينة واحدة','One-Sample T Test','','ttest1',0],['اختبار T لعينتين مستقلتين','Independent-Samples T Test','','ttestInd',0],['اختبار T لعينتين مرتبطتين','Paired-Samples T Test','','ttestPair',0],['تحليل التباين الأحادي','One-Way ANOVA','','anova',0],S,['الارتباط (Pearson / Spearman)','Correlate (Pearson / Spearman)','','correlate',0],S,['الانحدار','Regression','',null,5],['الاختبارات اللامعلمية','Nonparametric Tests','',null,5],['التحليل العاملي','Factor Analysis','',null,5],['اختبار الثبات (ألفا)','Reliability (Alpha)','',null,5]],
 'رسوم':[['المدرج التكراري','Histogram','',null,4],['مخطط الصندوق','Boxplot','',null,4],['مخطط الانتشار','Scatter','',null,4],['مخطط الأعمدة','Bar','',null,4]],
 'أدوات':[['تصدير الكود (Python / R)','Export code (Python / R)','',null,6],['سجل العمليات','History','',null,6]],
 'إضافات':[['مكتبة الإضافات','Extension Hub','',null,8]],
 'نافذة':[['عرض البيانات','Data window','','showData',0],['نافذة المخرجات','Output window','','outputWide',3]],
-'مساعدة':[['دليل StatLab','StatLab Guide','F1','guide',3],['اختصارات لوحة المفاتيح','Keyboard shortcuts','','guideKeys',3],['شاشة الترحيب','Welcome screen','','welcome',3],['عن StatLab','About StatLab','','about',0]]};
+'مساعدة':[['دليل Smart-Analysis','Smart-Analysis Guide','F1','guide',3],['اختصارات لوحة المفاتيح','Keyboard shortcuts','','guideKeys',3],['شاشة الترحيب','Welcome screen','','welcome',3],['عن Smart-Analysis','About Smart-Analysis','','about',0]]};
 MENUS.forEach(m=>{if(!m[2]||m[2]==='')m[2]=D[m[0]]||[]});
-const ICON={new:'new',open:'open',save:'save',exportHtml:'html',exportWord:'word',exportPdf:'pdf',exportMd:'md',exportXlsx:'excel',exportCsv:'export',demo:'sparkle',print:'print',undo:'undo',redo:'redo',copy:'copy',paste:'copy',find:'find',addText:'text',theme:'theme',lang:'lang',palette:'cmd',pane:'output',outputWide:'expand',welcome:'rocket',frequencies:'table',descriptives:'analyze',crosstabs:'data',ttest1:'chart',ttestInd:'chart',ttestPair:'chart',anova:'chart',correlate:'chart',showData:'data',guide:'guide',guideKeys:'keyboard',about:'info'};
+const ICON={new:'new',open:'open',save:'save',exportHtml:'html',exportWord:'word',exportPdf:'pdf',exportMd:'md',exportXlsx:'excel',exportCsv:'export',demo:'sparkle',print:'print',undo:'undo',redo:'redo',copy:'copy',paste:'copy',find:'find',addText:'text',theme:'theme',lang:'lang',palette:'cmd',pane:'output',outputWide:'expand',welcome:'rocket',frequencies:'table',descriptives:'analyze',crosstabs:'data',ttest1:'chart',ttestInd:'chart',ttestPair:'chart',anova:'chart',correlate:'chart',showData:'data',guide:'learn',guideKeys:'keyboard',about:'info'};
 // شريط الأدوات: [أيقونة، أمر، عربي، English، اختصار]
-const TB=[['new','new','جديد','New',''],['open','open','فتح','Open','Ctrl+O'],['save','save','حفظ','Save','Ctrl+S'],'|',['undo','undo','تراجع','Undo','Ctrl+Z'],['redo','redo','إعادة','Redo','Ctrl+Y'],'|',['find','find','بحث','Find','Ctrl+F'],['cmd','palette','لوحة الأوامر','Command palette','Ctrl+K'],['compute','compute','حساب متغير (قريباً)','Compute Variable (soon)',''],['analyze','descriptives','إحصاء وصفي','Descriptives',''],['chart','graphs','رسوم (قريباً)','Graphs (soon)',''],'|',['theme','theme','فاتح / داكن','Light / Dark','Ctrl+Shift+D'],['lang','lang','English / عربي','Arabic / English','Ctrl+Shift+L'],['guide','guide','الدليل','Guide','F1']];
+const TB=[['new','new','جديد','New','Alt+N'],['open','open','فتح','Open','Ctrl+O'],['save','save','حفظ','Save','Ctrl+S'],'|',['undo','undo','تراجع','Undo','Ctrl+Z'],['redo','redo','إعادة','Redo','Ctrl+Y'],'|',['find','find','بحث','Find','Ctrl+F'],['cmd','palette','لوحة الأوامر','Command palette','Ctrl+K'],'|',['compute','compute','حساب متغير (قريباً)','Compute Variable (soon)',''],['analyze','descriptives','إحصاء وصفي','Descriptives',''],['chart','graphs','رسوم (قريباً)','Graphs (soon)','']];
 const $=s=>document.querySelector(s),root=document.documentElement;
 let lang=localStorage.lang||'ar',theme=localStorage.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
 root.lang=lang;
 function say(t){$('#status').textContent=t}
 function applyLook(){root.dataset.theme=theme;root.lang=lang;root.dir=lang==='ar'?'rtl':'ltr';localStorage.lang=lang;localStorage.theme=theme;
- $('#titlebar .brand').innerHTML=mark(26)+'<span class="wm"><b>Stat</b><i>Lab</i></span>';
- $('#btnGuide').innerHTML=ic('guide',16)+`<span>${T('الدليل','Guide')}</span>`;$('#btnGuide').title='F1';
+ $('#titlebar .brand').innerHTML=mark(34)+'<span class="wm"><b>Smart</b><i>-Analysis</i></span>';
+ $('#tbCtl').innerHTML=`<div class="seg" role="group" aria-label="${T('اللغة','Language')}"><button data-l="ar" class="${lang==='ar'?'on':''}" title="العربية (Alt+L)">ع</button><button data-l="en" class="${lang==='en'?'on':''}" title="English (Alt+L)">EN</button></div><button class="swt ${theme}" id="btnTheme" role="switch" aria-checked="${theme==='dark'}" title="${T('الوضع الفاتح / الداكن','Light / dark mode')} (Alt+D)"><span class="k">${ic(theme==='dark'?'theme':'sun',14)}</span><span class="s">${ic('sun',13)}</span><span class="m">${ic('theme',13)}</span></button>`;
+ $('#tbCtl').querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{if(b.dataset.l!==lang){lang=b.dataset.l;applyLook()}});$('#btnTheme').onclick=()=>ACT.theme();
+ $('#btnGuide').innerHTML=ic('learn',18)+`<span>${T('الدليل','Guide')}</span>`;$('#btnGuide').title=T('دليل الاستخدام (F1)','User guide (F1)');
  document.querySelectorAll('.tab').forEach(b=>{const v=b.dataset.view==='data';b.innerHTML=lang==='ar'?`${v?'عرض البيانات':'عرض المتغيرات'} <small>${v?'Data View':'Variable View'}</small>`:(v?'Data View':'Variable View')});
  buildMenus();buildToolbar();$('#outputPane').relang();G.refresh&&G.refresh();
- say(T('المحرك جاهز','Engine ready'));$('#hint').textContent=T('Ctrl+K للبحث عن أي أمر · F1 للدليل','Ctrl+K to search any command · F1 for the guide');
+ say(T('المحرك جاهز','Engine ready'));$('#hint').textContent=T('اضغط Ctrl+K للبحث عن أي أمر · F1 للدليل','Ctrl+K to search any command · F1 for the guide');
  $('#palInput').placeholder=T('ابحث عن أمر أو تحليل...','Search a command or analysis...');$('#btnInstall').textContent=T('تثبيت','Install')}
 const ACT={theme(){theme=theme==='dark'?'light':'dark';applyLook()},lang(){lang=lang==='ar'?'en':'ar';applyLook()},palette:openPal,
  pane(){const p=$('#outputPane');p.style.display=p.style.display==='none'?'':'none'},print(){print()},about:showAbout,
  outputWide(){const p=$('#outputPane');p.style.display='';p.classList.toggle('wide');p.relang()},
  showData(){$('.tab[data-view=data]').click()},find:()=>openFind(),addText,guide:()=>openGuide(),guideKeys:()=>openGuide('keys'),welcome:()=>showWelcome(ACT,true),
  exportHtml:EXPORT.html,exportWord:EXPORT.word,exportPdf:EXPORT.pdf,exportMd:EXPORT.md,exportXlsx:EXPORT.xlsx};
-function run(it){if(it[3]&&ACT[it[3]])ACT[it[3]]();else say(it[4]?T(`«${it[0]}» هتتفعل في المرحلة ${it[4]}`,`“${it[1]}” arrives in phase ${it[4]}`):T(`«${it[0]}» قريباً`,`“${it[1]}” is coming soon`))}
+function run(it){if(it[3]&&ACT[it[3]])ACT[it[3]]();else say(it[4]?T(`سيتوفر «${it[0]}» في المرحلة ${it[4]}`,`“${it[1]}” arrives in phase ${it[4]}`):T(`«${it[0]}» قريباً`,`“${it[1]}” is coming soon`))}
 const label=it=>lang==='ar'?`${it[0]} <small class="en">${it[1]}</small>`:it[1];
 function buildMenus(){const bar=$('#menubar');bar.innerHTML='';
  MENUS.forEach(m=>{const w=document.createElement('div');w.className='menu';const b=document.createElement('button');b.textContent=T(m[0],m[1]);w.append(b);
@@ -49,9 +51,10 @@ function buildMenus(){const bar=$('#menubar');bar.innerHTML='';
   b.onmouseenter=()=>{if(document.querySelector('.menu.open')){close();w.classList.add('open')}};bar.append(w)})}
 function close(){document.querySelectorAll('.menu.open').forEach(x=>x.classList.remove('open'))}
 document.addEventListener('click',close);
-function buildToolbar(){const t=$('#toolbar');t.innerHTML='';TB.forEach(i=>{if(i==='|'){const s=document.createElement('span');s.className='sep';t.append(s);return}
- const live=!!ACT[i[1]],b=document.createElement('button');b.innerHTML=ic(i[0],19);b.title=T(i[2],i[3])+(i[4]?`  (${i[4]})`:'');b.setAttribute('aria-label',T(i[2],i[3]));if(!live)b.classList.add('soonit');
- b.onclick=()=>run([i[2],i[3],'',live?i[1]:null,i[1]==='graphs'?4:0]);t.append(b)})}
+function buildToolbar(){const t=$('#toolbar');t.innerHTML='';let g=null;const open=()=>{g=document.createElement('div');g.className='grp';t.append(g)};open();
+ TB.forEach(i=>{if(i==='|'){open();return}
+ const live=!!ACT[i[1]],b=document.createElement('button');b.innerHTML=ic(i[0],21);b.title=T(i[2],i[3])+(i[4]?`  (${i[4]})`:'');b.setAttribute('aria-label',T(i[2],i[3]));if(!live)b.classList.add('soonit');
+ b.onclick=()=>run([i[2],i[3],'',live?i[1]:null,i[1]==='graphs'?4:0]);g.append(b)})}
 // ---- لوحة الأوامر ----
 let sel=0,items=[];
 function openPal(){$('#palette').hidden=false;$('#palInput').value='';filter();$('#palInput').focus()}
@@ -63,14 +66,15 @@ function pick(i){const x=items[i];if(!x)return;$('#palette').hidden=true;run(x[0
 $('#palInput').oninput=filter;
 $('#palInput').onkeydown=e=>{if(e.key==='ArrowDown'){sel=Math.min(sel+1,items.length-1);drawPal()}else if(e.key==='ArrowUp'){sel=Math.max(sel-1,0);drawPal()}else if(e.key==='Enter')pick(sel);else if(e.key==='Escape')$('#palette').hidden=true};
 $('#palette').onclick=e=>{if(e.target.id==='palette')$('#palette').hidden=true};
-document.addEventListener('keydown',e=>{const k=e.key.toLowerCase(),m=e.ctrlKey||e.metaKey;
- if(m&&k==='k'){e.preventDefault();openPal()}
- else if(m&&e.shiftKey&&k==='d'){e.preventDefault();ACT.theme()}
- else if(m&&e.shiftKey&&k==='l'){e.preventDefault();ACT.lang()}
- else if(m&&e.shiftKey&&k==='o'){e.preventDefault();ACT.pane()}
- else if(m&&!e.shiftKey&&k==='f'){e.preventDefault();openFind()}
- else if(m&&k==='s'){e.preventDefault();ACT.save()}else if(m&&k==='o'){e.preventDefault();ACT.open()}
- else if(e.key==='F1'){e.preventDefault();ACT.guide()}else if(k==='escape')close()});
+// الاختصارات: تُقرأ برمز المفتاح الفيزيائي فتعمل مع أي تخطيط (عربي/إنجليزي)، وفي مرحلة الالتقاط قبل أي عنصر آخر
+addEventListener('keydown',e=>{if(e.isComposing)return;const k=letter(e),ctrl=e.ctrlKey||e.metaKey,alt=e.altKey&&!ctrl&&!e.shiftKey;
+ if(document.querySelector('.dlgov:not(.gov):not(.wov)')){return}
+ let f=null;
+ if(e.key==='F1')f=()=>ACT.guide();
+ else if(ctrl&&!e.shiftKey&&!e.altKey){f={k:()=>openPal(),f:()=>openFind(),s:()=>ACT.save(),o:()=>ACT.open()}[k]}
+ else if(alt){f={d:()=>ACT.theme(),l:()=>ACT.lang(),o:()=>ACT.pane(),w:()=>ACT.outputWide(),n:()=>ACT.new()}[k]}
+ else if(e.key==='Escape')close();
+ if(f){e.preventDefault();e.stopPropagation();f()}},true);
 document.addEventListener('statlab:find',e=>openFind(e.detail));
 // ---- PWA ----
 let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#btnInstall').hidden=false});

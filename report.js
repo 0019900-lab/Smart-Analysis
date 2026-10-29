@@ -1,4 +1,4 @@
-// StatLab – بناء التقارير (بدون DOM، قابل للاختبار): جداول APA + تصدير HTML / Word / Markdown / Excel
+// Smart-Analysis – بناء التقارير (بدون DOM، قابل للاختبار): جداول APA + تصدير HTML / Word / Markdown / Excel
 export const esc=s=>String(s??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 const BOUND=/^(Sig|p$|Correlation|Eta|Omega|Phi|Cram[eé]r)/i;
 // APA: الإحصاءات المحصورة بين -1 و 1 (p, r, η²...) بتتكتب من غير صفر قبل العلامة العشرية
@@ -25,8 +25,8 @@ header.rp{display:flex;align-items:center;gap:12px;border-bottom:3px solid #5b4b
 .nt{font-size:12px;color:#555;margin-top:4px}.apaline{margin-top:8px;padding:8px 12px;background:#eef2ff;border-radius:8px;font-size:12.5px}.txt p{margin:0;padding:8px 12px;background:#fffbe6;border-inline-start:4px solid #f5c518;border-radius:6px}
 @media print{body{margin:0;max-width:none}.apaline{background:none;border:1px solid #bbb}}`;
 export function docHTML(items,o={}){const en=o.lang==='en',d=new Date().toLocaleString(en?'en-GB':'ar-EG');
- return`<!doctype html><html lang="${en?'en':'ar'}" dir="${en?'ltr':'rtl'}"><head><meta charset="utf-8"><title>StatLab – ${en?'Output':'المخرجات'}</title><style>${REPORT_CSS}</style></head><body><header class="rp"><b>StatLab</b><span>${en?'Analysis output':'تقرير المخرجات'}</span><small>${esc(d)}</small></header>${itemsHTML(items,o)}</body></html>`}
-// Word يفتح HTML بامتداد .doc (مع دعم RTL) — مش ملف docx حقيقي
+ return`<!doctype html><html lang="${en?'en':'ar'}" dir="${en?'ltr':'rtl'}"><head><meta charset="utf-8"><title>Smart-Analysis – ${en?'Output':'المخرجات'}</title><style>${REPORT_CSS}</style></head><body><header class="rp"><b>Smart-Analysis</b><span>${en?'Analysis output':'تقرير المخرجات'}</span><small>${esc(d)}</small></header>${itemsHTML(items,o)}</body></html>`}
+// Word يفتح HTML بامتداد .doc (مع دعم RTL) — وليس ملف docx حقيقياً
 export const wordHTML=(items,o={})=>docHTML(items,o).replace('<html ','<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" ');
 export function toTSV(t){return[t.head,...t.rows].map(r=>r.map(x=>String(x??'')).join('\t')).join('\n')}
 export function toMarkdown(items,o={}){const out=[],c={n:0},lbl=o.lang==='en'?'Table':'جدول';

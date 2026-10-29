@@ -44,7 +44,7 @@ export function commit(ch){
  const tx={addVars,v0,n0:s.n,n1,cells};
  push({undo:()=>apply(tx,-1),redo:()=>apply(tx,1)},true);emit();return{rejected}}
 export function setVar(i,f,val){const s=store;val=String(val).trim();
- if(i>=s.vars.length){if(f!=='name')return T('اكتب اسم المتغير الأول','Enter the first variable name first');if(!validName(val))return T('اسم متغير غير صالح أو مكرر','Invalid or duplicate variable name');
+ if(i>=s.vars.length){if(f!=='name')return T('اكتب اسم المتغير أولاً','Enter the first variable name first');if(!validName(val))return T('اسم متغير غير صالح أو مكرر','Invalid or duplicate variable name');
   const nv=mkVar(val),v0=s.vars.length;push({undo(){s.vars.length=v0;s.cols.length=v0},redo(){s.vars.push(nv);s.cols.push([])}},true);emit();return null}
  const v=s.vars[i];let nv=val;
  if(f==='name'&&!validName(val,i))return T('اسم متغير غير صالح أو مكرر','Invalid or duplicate variable name');
@@ -75,7 +75,7 @@ export function parseDelimited(t){
  return rows}
 export function rowsToState(rows,name='Imported'){
  rows=rows.filter(r=>r.some(x=>x!=null&&String(x).trim()!==''));
- if(!rows.length)throw new Error(T('الملف فاضي','The file is empty'));
+ if(!rows.length)throw new Error(T('الملف فارغ','The file is empty'));
  let C=0;for(const r of rows)if(r.length>C)C=r.length;
  const H=rows[0],n=rows.length-1,used=new Set(),vars=[],cols=[];
  for(let c=0;c<C;c++){

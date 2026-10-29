@@ -1,5 +1,5 @@
 // StatLab – Data View (virtual grid) + Variable View
-import {T} from './i18n.js';
+import {T} from './i18n.js';import {letter} from './keys.js';
 import {store,cell,show,commit,subscribe,setVar,undo,redo} from './data.js';
 const $=s=>document.querySelector(s),say=t=>{$('#status').textContent=t};
 const RH=26,CW=100,NW=52;
@@ -35,7 +35,7 @@ function startEdit(init){editing=true;ensureVisible();render();
  ed.style.top=(RH+sel.r*RH)+'px';ed.style.left=(NW+sel.c*CW)+'px';ed.style.width=CW+'px';
  ed.value=init!=null?init:raw(sel.r,sel.c);ed.hidden=false;ed.focus();if(init==null)ed.select()}
 function endEdit(save,dr,dc){if(!editing)return;editing=false;const v=ed.value;ed.hidden=true;
- if(save){const res=commit([{r:sel.r,c:sel.c,v}]);if(res.rejected)say(T('القيمة دي مش رقمية — المتغير من نوع Numeric','Not a number — this variable is Numeric'))}
+ if(save){const res=commit([{r:sel.r,c:sel.c,v}]);if(res.rejected)say(T('هذه القيمة غير رقمية — المتغير من نوع Numeric','Not a number — this variable is Numeric'))}
  wrap.focus();go(dr,dc)}
 ed.onkeydown=e=>{e.stopPropagation();if(e.isComposing)return;
  if(e.key==='Enter'){e.preventDefault();endEdit(true,1,0)}else if(e.key==='Tab'){e.preventDefault();endEdit(true,0,e.shiftKey?-1:1)}else if(e.key==='Escape'){endEdit(false,0,0)}};
@@ -45,11 +45,11 @@ function toTSV(){const q=rng(),out=[];for(let r=q.r0;r<=q.r1;r++){const a=[];for
 function pasteText(t){if(!t)return;const q=rng(),lines=t.replace(/\r/g,'').split('\n');if(lines.length>1&&lines[lines.length-1]==='')lines.pop();
  const ch=[];let w=1;lines.forEach((ln,i)=>{const p=ln.split('\t');if(p.length>w)w=p.length;p.forEach((v,j)=>ch.push({r:q.r0+i,c:q.c0+j,v}))});
  const res=commit(ch);anc={r:q.r0,c:q.c0};sel={r:q.r0+lines.length-1,c:q.c0+w-1};render();
- say(res.rejected?T(`اتلصق، وفيه ${res.rejected} قيمة غير رقمية اتجاهلت`,`Pasted; ${res.rejected} non-numeric values ignored`):T(`اتلصق ${ch.length.toLocaleString()} خلية`,`Pasted ${ch.length.toLocaleString()} cells`))}
+ say(res.rejected?T(`تم اللصق مع تجاهل ${res.rejected} قيمة غير رقمية`,`Pasted; ${res.rejected} non-numeric values ignored`):T(`تم لصق ${ch.length.toLocaleString()} خلية`,`Pasted ${ch.length.toLocaleString()} cells`))}
 export function refresh(){if(view==='data')render();else renderVars()}
 export function goTo(r,c){setView('data');sel={r,c};anc={r,c};ensureVisible();render();wrap.focus({preventScroll:true})}
-export const copy=()=>{navigator.clipboard.writeText(toTSV()).then(()=>say(T('اتنسخ','Copied')),()=>say(T('المتصفح منع النسخ، استخدم Ctrl+C','Browser blocked copying — use Ctrl+C')))};
-export async function paste(){try{pasteText(await navigator.clipboard.readText())}catch{say(T('المتصفح منع قراءة الحافظة، استخدم Ctrl+V','Browser blocked clipboard — use Ctrl+V'))}}
+export const copy=()=>{navigator.clipboard.writeText(toTSV()).then(()=>say(T('تم النسخ','Copied')),()=>say(T('منع المتصفح النسخ، استخدم Ctrl+C','Browser blocked copying — use Ctrl+C')))};
+export async function paste(){try{pasteText(await navigator.clipboard.readText())}catch{say(T('منع المتصفح قراءة الحافظة، استخدم Ctrl+V','Browser blocked clipboard — use Ctrl+V'))}}
 // ---- Variable View ----
 const VF=['name','type','width','decimals','label','values','missing','measure','role'];
 const OPT={type:['Numeric','String'],measure:['Scale','Ordinal','Nominal'],role:['Input','Target','Both','None','Partition','Split']};
@@ -76,7 +76,7 @@ export function init(){
  document.addEventListener('mouseup',()=>{drag=false});
  wrap.addEventListener('dblclick',e=>{const td=e.target.closest('td[data-r]');if(td&&view==='data'){sel={r:+td.dataset.r,c:+td.dataset.c};anc={...sel};startEdit()}});
  wrap.addEventListener('keydown',e=>{if(e.target===ed||view!=='data')return;const k=e.key,mod=e.ctrlKey||e.metaKey,s=e.shiftKey;
-  if(mod){if(k==='a'){e.preventDefault();anc={r:0,c:0};sel={r:Math.max(store.n-1,0),c:Math.max(store.vars.length-1,0)};render()}return}
+  if(mod){if(letter(e)==='a'){e.preventDefault();anc={r:0,c:0};sel={r:Math.max(store.n-1,0),c:Math.max(store.vars.length-1,0)};render()}return}
   const nav={ArrowDown:[1,0],ArrowUp:[-1,0],ArrowLeft:[0,-1],ArrowRight:[0,1],PageDown:[20,0],PageUp:[-20,0]}[k];
   if(nav){e.preventDefault();go(nav[0],nav[1],s)}
   else if(k==='Enter'){e.preventDefault();go(s?-1:1,0)}
@@ -90,6 +90,6 @@ export function init(){
  document.addEventListener('copy',e=>{if(view!=='data'||isField(e.target))return;e.clipboardData.setData('text/plain',toTSV());e.preventDefault()});
  document.addEventListener('cut',e=>{if(view!=='data'||isField(e.target))return;e.clipboardData.setData('text/plain',toTSV());e.preventDefault();clearRange()});
  document.addEventListener('paste',e=>{if(view!=='data'||isField(e.target))return;e.preventDefault();pasteText(e.clipboardData.getData('text/plain'))});
- document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||isField(e.target))return;const k=e.key.toLowerCase();
+ document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||isField(e.target))return;const k=letter(e);
   if(k==='z'){e.preventDefault();e.shiftKey?redo():undo()}else if(k==='y'){e.preventDefault();redo()}});
  updateDoc();render()}

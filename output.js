@@ -11,38 +11,38 @@ export const count=()=>items.length;
 export function addBlock(title,tables,apaLines){items.push({id:uid++,type:'result',title,tables,apa:apaLines,time:Date.now()});render();
  const b=$('#outputBody');b.lastElementChild&&b.lastElementChild.scrollIntoView({behavior:'smooth',block:'start'});
  const p=$('#outputPane');if(p.style.display==='none')p.style.display=''}
-export function addText(){const s=prompt(T('اكتب الملاحظة اللي عايز تضيفها للمخرجات:','Write the note to add to the output:'));if(s&&s.trim()){items.push({id:uid++,type:'text',text:s.trim()});render()}}
-export function clearOutput(){if(items.length&&!confirm(T('تمسح كل المخرجات؟','Clear all output?')))return;items=[];render()}
+export function addText(){const s=prompt(T('اكتب الملاحظة التي تريد إضافتها إلى المخرجات:','Write the note to add to the output:'));if(s&&s.trim()){items.push({id:uid++,type:'text',text:s.trim()});render()}}
+export function clearOutput(){if(items.length&&!confirm(T('هل تريد مسح كل المخرجات؟','Clear all output?')))return;items=[];render()}
 function tbCount(i){return items.slice(0,i).reduce((n,x)=>n+(x.type==='result'?x.tables.length:0),0)}
 function render(){const b=$('#outputBody'),o=opts();
- if(!items.length){b.className='empty';b.innerHTML=`<div class="emp">${ic('output',34)}<b>${T('لسه مفيش نتائج','No results yet')}</b><span>${T('شغّل أي تحليل من قائمة «تحليل» وهتظهر نتيجته هنا بتنسيق APA.','Run any analysis from the Analyze menu and its APA-style result appears here.')}</span><kbd>Ctrl+K</kbd></div>`;outline();return}
+ if(!items.length){b.className='empty';b.innerHTML=`<div class="emp">${ic('output',34)}<b>${T('لا توجد نتائج بعد','No results yet')}</b><span>${T('نفّذ أي تحليل من قائمة «تحليل» وستظهر نتيجته هنا بتنسيق APA.','Run any analysis from the Analyze menu and its APA-style result appears here.')}</span><kbd>Ctrl+K</kbd></div>`;outline();return}
  b.className='';let h='',n=0;
  items.forEach(it=>{
   if(it.type==='text'){h+=`<section class="blk txt" data-id="${it.id}"><div class="bh"><span class="bt">${ic('note',15)} ${T('ملاحظة','Note')}</span>${ctl(it)}</div><p>${esc(it.text).replace(/\n/g,'<br>')}</p></section>`;return}
-  h+=`<section class="blk${it.collapsed?' col':''}" data-id="${it.id}"><div class="bh"><button class="tg" data-act="toggle" title="${T('طي / فرد','Collapse / expand')}">${ic(it.collapsed?'chevR':'down',15)}</button><h4 data-act="rename" title="${T('دبل كليك لإعادة التسمية','Double-click to rename')}">${esc(it.title)}</h4><span class="tc">${it.tables.length} ${T('جدول','tables')}</span>${ctl(it)}</div>`;
+  h+=`<section class="blk${it.collapsed?' col':''}" data-id="${it.id}"><div class="bh"><button class="tg" data-act="toggle" title="${T('طيّ / توسيع','Collapse / expand')}">${ic(it.collapsed?'chevR':'down',15)}</button><h4 data-act="rename" title="${T('انقر مرتين لإعادة التسمية','Double-click to rename')}">${esc(it.title)}</h4><span class="tc">${it.tables.length} ${T('جدول','tables')}</span>${ctl(it)}</div>`;
   if(!it.collapsed){h+=it.tables.map(t=>tableHTML(t,++n,o)).join('');if(it.apa&&it.apa.length)h+=`<div class="apa"><div class="ah"><b>APA</b><button class="cp" data-act="copyapa" title="${T('نسخ سطر APA','Copy APA line')}">${ic('copy',14)}</button></div>${[].concat(it.apa).map(esc).join('<br>')}</div>`}
   else n+=it.tables.length;
   h+='</section>'});
  b.innerHTML=h;b.classList.toggle('apa-on',apa);b.querySelectorAll('.cp').forEach(x=>{if(!x.querySelector('svg'))x.innerHTML=ic('copy',14)});outline()}
-const ctl=it=>`<span class="ctl"><button data-act="up" title="${T('لفوق','Move up')}">${ic('up',14)}</button><button data-act="down" title="${T('لتحت','Move down')}">${ic('down',14)}</button><button data-act="del" title="${T('حذف','Delete')}">${ic('trash',14)}</button></span>`;
+const ctl=it=>`<span class="ctl"><button data-act="up" title="${T('للأعلى','Move up')}">${ic('up',14)}</button><button data-act="down" title="${T('للأسفل','Move down')}">${ic('down',14)}</button><button data-act="del" title="${T('حذف','Delete')}">${ic('trash',14)}</button></span>`;
 function outline(){const o=$('#outline');if(!o)return;
  o.innerHTML=`<div class="ol-h">${T('الفهرس','Outline')}</div>`+(items.length?items.map(it=>`<button data-go="${it.id}">${ic(it.type==='text'?'note':'table',14)}<span>${esc(it.type==='text'?it.text.slice(0,40):it.title)}</span></button>`).join(''):`<div class="ol-e">—</div>`)}
 async function loadXlsx(){if(!window.XLSX)await new Promise(ok=>{const s=document.createElement('script');s.src='vendor/xlsx.full.min.js';s.onload=ok;s.onerror=ok;document.head.append(s)});return window.XLSX}
 function dl(name,data,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
-const need=()=>items.length?true:(say(T('مفيش مخرجات للتصدير','Nothing to export')),false);
+const need=()=>items.length?true:(say(T('لا توجد مخرجات للتصدير','Nothing to export')),false);
 const stamp=()=>new Date().toISOString().slice(0,10);
 export const EXPORT={
- html(){if(need()){dl(`StatLab-output-${stamp()}.html`,docHTML(items,opts()),'text/html;charset=utf-8');say(T('اتصدّر HTML','Exported HTML'))}},
- word(){if(need()){dl(`StatLab-output-${stamp()}.doc`,'\ufeff'+wordHTML(items,opts()),'application/msword');say(T('اتصدّر ملف Word (.doc)','Exported Word (.doc)'))}},
+ html(){if(need()){dl(`Smart-Analysis-output-${stamp()}.html`,docHTML(items,opts()),'text/html;charset=utf-8');say(T('تم تصدير HTML','Exported HTML'))}},
+ word(){if(need()){dl(`Smart-Analysis-output-${stamp()}.doc`,'\ufeff'+wordHTML(items,opts()),'application/msword');say(T('تم تصدير ملف Word (.doc)','Exported Word (.doc)'))}},
  pdf(){if(!need())return;const f=document.createElement('iframe');f.style.cssText='position:fixed;width:0;height:0;border:0';document.body.append(f);
-  f.srcdoc=docHTML(items,opts());f.onload=()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),2000)};say(T('اختار «حفظ كـ PDF» من نافذة الطباعة','Choose "Save as PDF" in the print dialog'))},
- md(){if(need()){dl(`StatLab-output-${stamp()}.md`,toMarkdown(items,opts()),'text/markdown;charset=utf-8');say(T('اتصدّر Markdown','Exported Markdown'))}},
- async xlsx(){if(!need())return;const X=await loadXlsx();if(!X)return say(T('مكتبة Excel مش متاحة (vendor/xlsx.full.min.js)','Excel library missing (vendor/xlsx.full.min.js)'));
-  const sh=sheetsAOA(items);if(!sh.length)return say(T('مفيش جداول','No tables'));const wb=X.utils.book_new();sh.forEach(s=>X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet(s.aoa),s.name));
-  X.writeFile(wb,`StatLab-tables-${stamp()}.xlsx`);say(T(`اتصدّر ${sh.length} جدول إلى Excel`,`Exported ${sh.length} tables to Excel`))},
+  f.srcdoc=docHTML(items,opts());f.onload=()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),2000)};say(T('اختر «حفظ بصيغة PDF» من نافذة الطباعة','Choose "Save as PDF" in the print dialog'))},
+ md(){if(need()){dl(`Smart-Analysis-output-${stamp()}.md`,toMarkdown(items,opts()),'text/markdown;charset=utf-8');say(T('تم تصدير Markdown','Exported Markdown'))}},
+ async xlsx(){if(!need())return;const X=await loadXlsx();if(!X)return say(T('مكتبة Excel غير متاحة (vendor/xlsx.full.min.js)','Excel library missing (vendor/xlsx.full.min.js)'));
+  const sh=sheetsAOA(items);if(!sh.length)return say(T('لا توجد جداول','No tables'));const wb=X.utils.book_new();sh.forEach(s=>X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet(s.aoa),s.name));
+  X.writeFile(wb,`Smart-Analysis-tables-${stamp()}.xlsx`);say(T(`تم تصدير ${sh.length} جدولاً إلى Excel`,`Exported ${sh.length} tables to Excel`))},
  async copyAll(){if(!need())return;const html=itemsHTML(items,opts());
-  try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([`<style>${'table{border-collapse:collapse}th,td{padding:3px 10px}'}</style>${html}`],{type:'text/html'}),'text/plain':new Blob([toMarkdown(items,opts())],{type:'text/plain'})})]);say(T('اتنسخ كل المخرجات (الصقها في Word)','Copied all output (paste into Word)'))}
-  catch{say(T('المتصفح منع النسخ','Clipboard blocked by browser'))}}};
+  try{await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([`<style>${'table{border-collapse:collapse}th,td{padding:3px 10px}'}</style>${html}`],{type:'text/html'}),'text/plain':new Blob([toMarkdown(items,opts())],{type:'text/plain'})})]);say(T('تم نسخ كل المخرجات (الصقها في Word)','Copied all output (paste into Word)'))}
+  catch{say(T('منع المتصفح عملية النسخ','Clipboard blocked by browser'))}}};
 export function initOutput(){const pane=$('#outputPane');
  pane.innerHTML=`<div class="oh"><h3></h3><div class="otb"></div></div><div class="ob"><nav id="outline"></nav><div id="outputBody" class="empty"></div></div>`;
  const tb=pane.querySelector('.otb');
@@ -58,7 +58,7 @@ export function initOutput(){const pane=$('#outputPane');
  document.addEventListener('click',()=>menu.classList.remove('open'));
  B('trash','clear',clearOutput);
  B('expand','wide',()=>{pane.classList.toggle('wide');lab()});
- function lab(){const L={find:T('بحث في المخرجات (Ctrl+F)','Find in output (Ctrl+F)'),addText:T('إضافة ملاحظة','Add note'),colAll:T('طي / فرد الكل','Collapse / expand all'),style:apa?T('نمط الجداول: APA (اضغط للنمط العصري)','Table style: APA (click for modern)'):T('نمط الجداول: عصري (اضغط لـ APA)','Table style: Modern (click for APA)'),export:T('تصدير','Export'),clear:T('مسح المخرجات','Clear output'),wide:pane.classList.contains('wide')?T('تصغير','Shrink'):T('تكبير','Expand')};
+ function lab(){const L={find:T('بحث في المخرجات (Ctrl+F)','Find in output (Ctrl+F)'),addText:T('إضافة ملاحظة','Add note'),colAll:T('طيّ / توسيع الكل','Collapse / expand all'),style:apa?T('نمط الجداول: APA (انقر للنمط العصري)','Table style: APA (click for modern)'):T('نمط الجداول: عصري (انقر للعودة إلى APA)','Table style: Modern (click for APA)'),export:T('تصدير','Export'),clear:T('مسح المخرجات','Clear output'),wide:pane.classList.contains('wide')?T('تصغير','Shrink'):T('تكبير','Expand')};
   tb.querySelectorAll('[data-k]').forEach(b=>{b.title=L[b.dataset.k];b.classList.toggle('on',b.dataset.k==='style'&&apa)});
   st.innerHTML=ic('table',17)+`<span>${apa?'APA':T('عصري','Modern')}</span>`;tb.querySelector('[data-k=wide]').innerHTML=ic(pane.classList.contains('wide')?'shrink':'expand',17);
   pane.querySelector('h3').innerHTML=`${ic('output',18)} ${T('المخرجات','Output')}`;
@@ -68,8 +68,8 @@ export function initOutput(){const pane=$('#outputPane');
  pane.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){const s=pane.querySelector(`[data-id="${g.dataset.go}"]`);s&&s.scrollIntoView({behavior:'smooth',block:'start'});return}
   const a=e.target.closest('[data-act]');if(!a)return;const sec=a.closest('.blk'),it=sec&&items.find(x=>x.id===+sec.dataset.id),i=it?items.indexOf(it):-1,act=a.dataset.act;
   if(act==='copy'){const tbl=a.closest('.tbw');const idx=[...pane.querySelectorAll('.tbw')].indexOf(tbl);let n=0,t;for(const x of items){if(x.type!=='result'||x.collapsed)continue;if(idx<n+x.tables.length){t=x.tables[idx-n];break}n+=x.tables.length}
-   t&&navigator.clipboard.writeText(toTSV(t)).then(()=>say(T('اتنسخ الجدول (الصقه في Excel)','Table copied (paste into Excel)')))}
-  else if(act==='copyapa')navigator.clipboard.writeText([].concat(it.apa).join('\n')).then(()=>say(T('اتنسخ سطر APA','APA line copied')));
+   t&&navigator.clipboard.writeText(toTSV(t)).then(()=>say(T('تم نسخ الجدول (الصقه في Excel)','Table copied (paste into Excel)')))}
+  else if(act==='copyapa')navigator.clipboard.writeText([].concat(it.apa).join('\n')).then(()=>say(T('تم نسخ سطر APA','APA line copied')));
   else if(act==='toggle'){it.collapsed=!it.collapsed;render()}
   else if(act==='del'){items.splice(i,1);render()}
   else if(act==='up'&&i>0){[items[i-1],items[i]]=[items[i],items[i-1]];render()}
