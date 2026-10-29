@@ -50,9 +50,15 @@ try:
   pg.keyboard.press('Escape')
   # menu + language
   pg.click('#menubar .menu >> nth=5');pg.screenshot(path=f'{out}/09_menu_analyze.png');pg.keyboard.press('Escape');pg.mouse.click(700,500)
-  pg.keyboard.press('Control+Shift+L');pg.wait_for_timeout(200);chk('lang en',pg.evaluate("document.documentElement.lang")=='en')
+  pg.keyboard.press('Alt+l');pg.wait_for_timeout(200);chk('lang en',pg.evaluate("document.documentElement.lang")=='en')
   pg.screenshot(path=f'{out}/10_main_en.png');pg.click('.tab[data-view=var]');pg.screenshot(path=f'{out}/11_varview_en.png')
-  pg.keyboard.press('Control+Shift+D');pg.wait_for_timeout(200);pg.keyboard.press('Control+Shift+L');pg.wait_for_timeout(200);pg.click('.tab[data-view=data]');pg.screenshot(path=f'{out}/12_dark_ar.png')
+  pg.keyboard.press('Alt+d');pg.wait_for_timeout(200);pg.keyboard.press('Alt+l');pg.wait_for_timeout(200);pg.click('.tab[data-view=data]');pg.screenshot(path=f'{out}/12_dark_ar.png')
+  # Arabic-layout shortcuts (code-based)
+  pg.evaluate("document.body.focus()")
+  pg.evaluate("dispatchEvent(new KeyboardEvent('keydown',{code:'KeyK',key:'ل',ctrlKey:true,bubbles:true,cancelable:true}))");chk('Ctrl+K on Arabic layout',pg.locator('#palette:not([hidden])').count()==1);pg.keyboard.press('Escape')
+  pg.evaluate("dispatchEvent(new KeyboardEvent('keydown',{code:'KeyD',key:'ي',altKey:true,bubbles:true,cancelable:true}))");chk('Alt+D on Arabic layout',pg.evaluate("document.documentElement.dataset.theme")=='light')
+  chk('single guide button',pg.locator('#btnGuide').count()==1 and pg.locator('#toolbar [aria-label*=Guide],#toolbar [aria-label*=الدليل]').count()==0)
+  chk('brand name',pg.title()=='Smart-Analysis')
   # about
   pg.evaluate("__statlab.ACT.about()");pg.wait_for_selector('.about');pg.wait_for_timeout(350);pg.screenshot(path=f'{out}/13_about.png')
   chk('no console errors',not errs)
