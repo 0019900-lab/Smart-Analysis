@@ -57,3 +57,30 @@ tr.sp td{padding:0!important;border:0!important}
 #varGrid input:disabled{opacity:.3}
 #varGrid td:nth-child(2) input{min-width:140px}#varGrid td:nth-child(6) input,#varGrid td:nth-child(7) input,#varGrid td:nth-child(8) input{min-width:130px}
 #info{font-variant-numeric:tabular-nums}
+/* ---- Phase 2: output + dialog ---- */
+#outputPane.wide{width:72%;max-width:none}
+.oh{display:flex;align-items:center;gap:4px;margin-bottom:8px}.oh h3{margin:0!important;flex:1}.oh button{width:28px;height:28px;border-radius:6px}.oh button:hover{background:var(--hov)}
+.blk{direction:ltr;margin-bottom:22px;padding-bottom:10px;border-bottom:1px dashed var(--line)}
+.blk h4{margin:0 0 6px;font-size:14px;color:var(--acc)}
+.tbw{margin:8px 0}.cap{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:12.5px}.cp{opacity:.5;font-size:13px}.cp:hover{opacity:1}
+.tw{overflow-x:auto}
+table.ot{border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums}
+.ot th,.ot td{padding:3px 10px;text-align:right;white-space:nowrap;border:0;height:auto;min-width:0}
+.ot th{border-top:1.5px solid var(--text);border-bottom:1px solid var(--text);position:static;background:none;color:var(--text);font-weight:600}
+.ot tbody tr:last-child td{border-bottom:1.5px solid var(--text)}
+.ot .l{text-align:left}
+.nt{font-size:11.5px;color:var(--mute);margin-top:3px}
+.apa{margin-top:8px;padding:8px 10px;background:var(--acc2);border-radius:var(--r);font-size:12.5px;user-select:all}
+.dlgov{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:98}
+.dlg{width:min(560px,94vw);max-height:90vh;display:flex;flex-direction:column;background:var(--panel);border-radius:12px;box-shadow:0 20px 60px #0006;overflow:hidden}
+.dlg h3{margin:0;padding:14px 18px;border-bottom:1px solid var(--line)}
+.dbody{padding:14px 18px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.fld>label{display:block;font-weight:600;margin-bottom:4px}
+.fld select,.opts select,.opts input[type=text],.opts input[type=number]{padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);font:inherit}
+.fld select{width:100%}
+.vlist{max-height:170px;overflow:auto;border:1px solid var(--line);border-radius:6px;padding:4px}
+.vlist label{display:block;padding:3px 6px;border-radius:4px;cursor:pointer}.vlist label:hover{background:var(--hov)}.vlist small{color:var(--mute)}.ty{color:var(--acc);font-weight:700;display:inline-block;width:14px}
+.opts{display:flex;flex-direction:column;gap:8px}.o{display:flex;gap:8px;align-items:center}
+.derr{color:#d33;padding:0 18px;min-height:18px;font-size:13px}
+.dfoot{display:flex;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+.dfoot button{padding:7px 20px;border-radius:8px;border:1px solid var(--line)}.dfoot .go{background:var(--acc);color:#fff;border-color:var(--acc)}

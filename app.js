@@ -1,4 +1,4 @@
-import * as G from './ui-grid.js';import * as F from './files.js';import {store,undo,redo} from './data.js';
+import * as G from './ui-grid.js';import * as F from './files.js';import {store,undo,redo} from './data.js';import {A} from './analyses.js';import {initOutput} from './output.js';
 // StatLab – Phase 0 shell. كل عنصر: [عربي, English, اختصار, أمر, مرحلة]
 const S='-';
 const MENUS=[
@@ -18,7 +18,7 @@ const D={
 'عرض':[['الوضع الداكن/الفاتح','Toggle theme','Ctrl+Shift+D','theme',0],['العربية / English','Language','Ctrl+Shift+L','lang',0],['لوحة الأوامر','Command palette','Ctrl+K','palette',0],['اللوحة الجانبية للنتائج','Toggle output pane','Ctrl+Shift+O','pane',0]],
 'بيانات':[['تعريف خصائص المتغير','Define Variable Properties','',null,1],['ترتيب الحالات','Sort Cases','',null,1],['دمج ملفات','Merge Files','',null,1],['تقسيم الملف','Split File','',null,1],['اختيار حالات','Select Cases','',null,1],['ترجيح الحالات','Weight Cases','',null,1]],
 'تحويل':[['حساب متغير','Compute Variable','',null,1],['إعادة ترميز','Recode','',null,1],['تجميع (Binning)','Visual Binning','',null,1],['استبدال القيم المفقودة','Replace Missing','',null,2]],
-'تحليل':[['إحصاء وصفي: تكرارات','Frequencies','',null,2],['إحصاء وصفي: وصفي','Descriptives','',null,2],['جداول تقاطعية','Crosstabs','',null,2],['اختبار T','T-Test','',null,2],['ANOVA','One-Way ANOVA','',null,2],['ارتباط','Correlate','',null,2],['انحدار','Regression','',null,5],['اختبارات لامعلمية','Nonparametric','',null,5],['تحليل عاملي','Factor Analysis','',null,5],['الثبات (ألفا)','Reliability','',null,5]],
+'تحليل':[['تكرارات','Frequencies','','frequencies',0],['إحصاء وصفي','Descriptives','','descriptives',0],['جداول تقاطعية','Crosstabs','','crosstabs',0],S,['T لعينة واحدة','One-Sample T Test','','ttest1',0],['T لعينتين مستقلتين','Independent-Samples T Test','','ttestInd',0],['T لعينتين مرتبطتين','Paired-Samples T Test','','ttestPair',0],['تحليل التباين الأحادي','One-Way ANOVA','','anova',0],S,['ارتباط (Pearson / Spearman)','Correlate','','correlate',0],S,['انحدار','Regression','',null,5],['اختبارات لامعلمية','Nonparametric','',null,5],['تحليل عاملي','Factor Analysis','',null,5],['الثبات (ألفا)','Reliability','',null,5]],
 'رسوم':[['هيستوجرام','Histogram','',null,4],['Boxplot','Boxplot','',null,4],['نقاط (Scatter)','Scatter','',null,4],['أعمدة','Bar','',null,4]],
 'أدوات':[['تصدير الكود (Python/R)','Export code','',null,6],['سجل العمليات','History','',null,6]],
 'إضافات':[['مكتبة الإضافات','Extension Hub','',null,8]],
@@ -30,7 +30,7 @@ let lang=localStorage.lang||'ar',theme=localStorage.theme||(matchMedia('(prefers
 const T=(a,e)=>lang==='ar'?a:e;
 MENUS.forEach(m=>{if(!m[2]||m[2]==='')m[2]=D[m[0]]||[]});
 function applyLook(){root.dataset.theme=theme;root.lang=lang;root.dir=lang==='ar'?'rtl':'ltr';localStorage.lang=lang;localStorage.theme=theme;buildMenus();buildToolbar();
- $('#outputBody').textContent=T('النتائج هتظهر هنا','Results will appear here');$('#status').textContent=T('المحرك جاهز','Engine ready');
+ if($('#outputBody').classList.contains('empty'))$('#outputBody').textContent=T('النتائج هتظهر هنا','Results will appear here');$('#status').textContent=T('المحرك جاهز','Engine ready');
  $('#hint').textContent=T('Ctrl+K للبحث عن أي أمر','Ctrl+K to search any command');$('#palInput').placeholder=T('ابحث عن أمر أو تحليل...','Search a command or analysis...');
  $('#outputPane h3').textContent=T('المخرجات','Output');$('#btnInstall').textContent=T('تثبيت','Install')}
 const ACT={theme(){theme=theme==='dark'?'light':'dark';applyLook()},lang(){lang=lang==='ar'?'en':'ar';applyLook()},palette:openPal,pane(){const p=$('#outputPane');p.style.display=p.style.display==='none'?'':'none'},print(){print()},about(){say(T('StatLab v0.1 – المرحلة 0','StatLab v0.1 – Phase 0'))}};
@@ -66,6 +66,7 @@ document.addEventListener('keydown',e=>{const k=e.key.toLowerCase();
 let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#btnInstall').hidden=false});
 $('#btnInstall').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;$('#btnInstall').hidden=true}};
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
-Object.assign(ACT,{new:F.newDoc,open:F.openDialog,save:F.save,exportCsv:F.exportCsv,demo:F.demo,undo:()=>{undo()},redo:()=>{redo()},copy:G.copy,paste:G.paste});
+Object.assign(ACT,{new:F.newDoc,open:F.openDialog,save:F.save,exportCsv:F.exportCsv,demo:F.demo,undo:()=>{undo()},redo:()=>{redo()},copy:G.copy,paste:G.paste,analyze:A.descriptives,...A});
+initOutput();
 applyLook();G.init();
 addEventListener('beforeunload',e=>{if(store.dirty){e.preventDefault();e.returnValue=''}});
