@@ -1,4 +1,5 @@
 // StatLab – Data View (virtual grid) + Variable View
+import {T} from './i18n.js';
 import {store,cell,show,commit,subscribe,setVar,undo,redo} from './data.js';
 const $=s=>document.querySelector(s),say=t=>{$('#status').textContent=t};
 const RH=26,CW=100,NW=52;
@@ -34,7 +35,7 @@ function startEdit(init){editing=true;ensureVisible();render();
  ed.style.top=(RH+sel.r*RH)+'px';ed.style.left=(NW+sel.c*CW)+'px';ed.style.width=CW+'px';
  ed.value=init!=null?init:raw(sel.r,sel.c);ed.hidden=false;ed.focus();if(init==null)ed.select()}
 function endEdit(save,dr,dc){if(!editing)return;editing=false;const v=ed.value;ed.hidden=true;
- if(save){const res=commit([{r:sel.r,c:sel.c,v}]);if(res.rejected)say('القيمة دي مش رقمية — المتغير من نوع Numeric')}
+ if(save){const res=commit([{r:sel.r,c:sel.c,v}]);if(res.rejected)say(T('القيمة دي مش رقمية — المتغير من نوع Numeric','Not a number — this variable is Numeric'))}
  wrap.focus();go(dr,dc)}
 ed.onkeydown=e=>{e.stopPropagation();if(e.isComposing)return;
  if(e.key==='Enter'){e.preventDefault();endEdit(true,1,0)}else if(e.key==='Tab'){e.preventDefault();endEdit(true,0,e.shiftKey?-1:1)}else if(e.key==='Escape'){endEdit(false,0,0)}};
@@ -44,14 +45,16 @@ function toTSV(){const q=rng(),out=[];for(let r=q.r0;r<=q.r1;r++){const a=[];for
 function pasteText(t){if(!t)return;const q=rng(),lines=t.replace(/\r/g,'').split('\n');if(lines.length>1&&lines[lines.length-1]==='')lines.pop();
  const ch=[];let w=1;lines.forEach((ln,i)=>{const p=ln.split('\t');if(p.length>w)w=p.length;p.forEach((v,j)=>ch.push({r:q.r0+i,c:q.c0+j,v}))});
  const res=commit(ch);anc={r:q.r0,c:q.c0};sel={r:q.r0+lines.length-1,c:q.c0+w-1};render();
- say(res.rejected?`اتلصق، وفيه ${res.rejected} قيمة غير رقمية اتجاهلت`:`اتلصق ${ch.length.toLocaleString()} خلية`)}
-export const copy=()=>{navigator.clipboard.writeText(toTSV()).then(()=>say('اتنسخ'),()=>say('المتصفح منع النسخ، استخدم Ctrl+C'))};
-export async function paste(){try{pasteText(await navigator.clipboard.readText())}catch{say('المتصفح منع قراءة الحافظة، استخدم Ctrl+V')}}
+ say(res.rejected?T(`اتلصق، وفيه ${res.rejected} قيمة غير رقمية اتجاهلت`,`Pasted; ${res.rejected} non-numeric values ignored`):T(`اتلصق ${ch.length.toLocaleString()} خلية`,`Pasted ${ch.length.toLocaleString()} cells`))}
+export function refresh(){if(view==='data')render();else renderVars()}
+export function goTo(r,c){setView('data');sel={r,c};anc={r,c};ensureVisible();render();wrap.focus({preventScroll:true})}
+export const copy=()=>{navigator.clipboard.writeText(toTSV()).then(()=>say(T('اتنسخ','Copied')),()=>say(T('المتصفح منع النسخ، استخدم Ctrl+C','Browser blocked copying — use Ctrl+C')))};
+export async function paste(){try{pasteText(await navigator.clipboard.readText())}catch{say(T('المتصفح منع قراءة الحافظة، استخدم Ctrl+V','Browser blocked clipboard — use Ctrl+V'))}}
 // ---- Variable View ----
 const VF=['name','type','width','decimals','label','values','missing','measure','role'];
 const OPT={type:['Numeric','String'],measure:['Scale','Ordinal','Nominal'],role:['Input','Target','Both','None','Partition','Split']};
 function renderVars(){
- let h='<thead><tr><th>#</th>'+['Name','Type','Width','Decimals','Label','Values','Missing','Measure','Role'].map(x=>`<th>${x}</th>`).join('')+'</tr></thead><tbody>';
+ let h='<thead><tr><th>#</th>'+[['الاسم','Name'],['النوع','Type'],['العرض','Width'],['الكسور العشرية','Decimals'],['التسمية','Label'],['تسميات القيم','Values'],['القيم المفقودة','Missing'],['مستوى القياس','Measure'],['الدور','Role']].map(x=>`<th>${T(x[0]+' <small>'+x[1]+'</small>',x[1])}</th>`).join('')+'</tr></thead><tbody>';
  for(let i=0;i<=store.vars.length;i++){const v=store.vars[i];h+=`<tr><th>${i+1}</th>`+VF.map(f=>{const val=v?v[f]:'';
   if(OPT[f]&&v)return`<td><select data-i="${i}" data-f="${f}">${OPT[f].map(o=>`<option${o===val?' selected':''}>${o}</option>`).join('')}</select></td>`;
   return`<td><input data-i="${i}" data-f="${f}" value="${esc(val)}"${!v&&f!=='name'?' disabled':''}></td>`}).join('')+'</tr>'}

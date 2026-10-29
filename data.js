@@ -1,4 +1,5 @@
 // StatLab data engine – Phase 1: columnar store, undo/redo, CSV/project IO
+import {T} from './i18n.js';
 export const store={name:'Untitled1',vars:[],cols:[],n:0,dirty:false};
 const subs=[];export const subscribe=f=>subs.push(f);
 const emit=k=>subs.forEach(f=>f(k||'data'));
@@ -43,11 +44,11 @@ export function commit(ch){
  const tx={addVars,v0,n0:s.n,n1,cells};
  push({undo:()=>apply(tx,-1),redo:()=>apply(tx,1)},true);emit();return{rejected}}
 export function setVar(i,f,val){const s=store;val=String(val).trim();
- if(i>=s.vars.length){if(f!=='name')return'اكتب اسم المتغير الأول';if(!validName(val))return'اسم متغير غير صالح أو مكرر';
+ if(i>=s.vars.length){if(f!=='name')return T('اكتب اسم المتغير الأول','Enter the first variable name first');if(!validName(val))return T('اسم متغير غير صالح أو مكرر','Invalid or duplicate variable name');
   const nv=mkVar(val),v0=s.vars.length;push({undo(){s.vars.length=v0;s.cols.length=v0},redo(){s.vars.push(nv);s.cols.push([])}},true);emit();return null}
  const v=s.vars[i];let nv=val;
- if(f==='name'&&!validName(val,i))return'اسم متغير غير صالح أو مكرر';
- if(f==='width'||f==='decimals'){nv=parseInt(val);if(!(nv>=0&&nv<=40))return'قيمة رقمية بين 0 و 40'}
+ if(f==='name'&&!validName(val,i))return T('اسم متغير غير صالح أو مكرر','Invalid or duplicate variable name');
+ if(f==='width'||f==='decimals'){nv=parseInt(val);if(!(nv>=0&&nv<=40))return T('قيمة رقمية بين 0 و 40','A number between 0 and 40')}
  const before={...v},after={...v,[f]:nv},oc=s.cols[i];let nc=oc;
  if(f==='type'){if(nv===v.type)return null;
   nc=new Array(s.n);for(let r=0;r<s.n;r++){const x=oc[r];nc[r]=x==null?null:nv==='String'?String(x):(typeof x==='number'?x:(p=>Number.isNaN(p)?null:p)(parseNum(x)))}
@@ -74,7 +75,7 @@ export function parseDelimited(t){
  return rows}
 export function rowsToState(rows,name='Imported'){
  rows=rows.filter(r=>r.some(x=>x!=null&&String(x).trim()!==''));
- if(!rows.length)throw new Error('الملف فاضي');
+ if(!rows.length)throw new Error(T('الملف فاضي','The file is empty'));
  let C=0;for(const r of rows)if(r.length>C)C=r.length;
  const H=rows[0],n=rows.length-1,used=new Set(),vars=[],cols=[];
  for(let c=0;c<C;c++){
@@ -93,7 +94,7 @@ export function toCSV(){const s=store,q=x=>{x=x==null?'':String(x);return/[",\n\
  for(let r=0;r<s.n;r++){const a=new Array(s.vars.length);for(let c=0;c<a.length;c++)a[c]=q(s.cols[c][r]);out.push(a.join(','))}
  return'\uFEFF'+out.join('\r\n')}
 export const toProject=()=>JSON.stringify({app:'statlab',v:1,name:store.name,vars:store.vars,cols:store.cols,n:store.n});
-export function fromProject(t){const o=JSON.parse(t);if(o.app!=='statlab'||!Array.isArray(o.vars)||!Array.isArray(o.cols))throw new Error('ملف مشروع غير صالح');return{name:o.name||'Untitled1',vars:o.vars,cols:o.cols,n:o.n|0}}
+export function fromProject(t){const o=JSON.parse(t);if(o.app!=='statlab'||!Array.isArray(o.vars)||!Array.isArray(o.cols))throw new Error(T('ملف مشروع غير صالح','Invalid project file'));return{name:o.name||'Untitled1',vars:o.vars,cols:o.cols,n:o.n|0}}
 export function demoState(N=100000){
  const g=()=>{let u=0;while(!u)u=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*Math.random())};
  const id=[],age=[],sex=[],grp=[],inc=[],sc=[];

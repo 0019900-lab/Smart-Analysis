@@ -4,14 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>StatLab</title>
-<meta name="theme-color" content="#2f6fed">
+<meta name="theme-color" content="#4f46e5">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" type="image/png"><link rel="apple-touch-icon" href="assets/icon-192.png">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header id="titlebar"><span class="logo">◈</span><b>StatLab</b><span id="docname">Untitled1 [DataSet1]</span>
-  <button id="btnInstall" hidden>تثبيت</button></header>
+<header id="titlebar"><span class="brand"></span><span id="docname">Untitled1 [DataSet1]</span><span class="tbr"><button id="btnGuide" class="pill"></button><button id="btnInstall" hidden></button></span></header>
 <nav id="menubar" role="menubar"></nav>
 <div id="toolbar" role="toolbar"></div>
 <main id="workspace">
@@ -20,7 +19,7 @@
     <div id="gridWrap"><table id="grid"></table><table id="varGrid" hidden></table></div>
     <div id="tabs"><button class="tab active" data-view="data">Data View</button><button class="tab" data-view="var">Variable View</button></div>
   </section>
-  <aside id="outputPane"><h3 data-i18n="output">المخرجات</h3><div id="outputBody" class="empty">النتائج هتظهر هنا</div></aside>
+  <aside id="outputPane"></aside>
 </main>
 <footer id="statusbar"><span id="status">المحرك جاهز</span><span id="info"></span><span id="hint">Ctrl+K للبحث عن أي أمر</span></footer>
 <div id="palette" hidden><div class="box"><input id="palInput" placeholder="ابحث عن أمر أو تحليل..."><ul id="palList"></ul></div></div>
