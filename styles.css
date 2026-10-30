@@ -262,3 +262,18 @@ kbd{font:11px ui-monospace,Consolas,monospace;background:var(--head);border:1px 
 .xpl .xh{font-weight:800;color:#6d4cff;margin-bottom:2px}[data-theme=dark] .xpl .xh,[data-theme=dark] .xpl h5{color:#c4b5fd}
 .xpl h5{margin:9px 0 2px;font-size:12.5px;color:#6d4cff}.xpl p{margin:0}.xpl ul{margin:0;padding-inline-start:20px}.xpl li{margin:2px 0}
 .xpl.flash{animation:xflash 1.2s ease}@keyframes xin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}@keyframes xflash{0%,60%{box-shadow:0 0 0 3px rgba(124,92,255,.45)}100%{box-shadow:none}}
+
+/* ---- v0.5.1: أيقونات الشريط الجديدة داخل بلاطات متدرجة ---- */
+#toolbar .grp button{min-width:64px;height:78px;padding:6px 6px 5px;gap:5px}
+#toolbar .tile{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--gc) 9%,var(--panel));border:1px solid color-mix(in srgb,var(--gc) 20%,var(--line));transition:background .2s,border-color .2s,box-shadow .2s,transform .2s cubic-bezier(.3,1.5,.5,1)}
+#toolbar .ti{width:28px;height:28px;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
+#toolbar .g0 .ti{stroke:url(#ts0)}#toolbar .g1 .ti{stroke:url(#ts1)}#toolbar .g2 .ti{stroke:url(#ts2)}#toolbar .g3 .ti{stroke:url(#ts3)}
+#toolbar .g0 .ti .f{fill:url(#tf0)}#toolbar .g1 .ti .f{fill:url(#tf1)}#toolbar .g2 .ti .f{fill:url(#tf2)}#toolbar .g3 .ti .f{fill:url(#tf3)}
+#toolbar .grp button:hover{background:transparent;box-shadow:none;transform:none}
+#toolbar .grp button:hover .tile{background:linear-gradient(135deg,var(--gc),color-mix(in srgb,var(--gc) 55%,#0fb3d9));border-color:transparent;box-shadow:0 8px 18px color-mix(in srgb,var(--gc) 38%,transparent);transform:translateY(-2px)}
+#toolbar .grp button:hover .ti{stroke:#fff;transform:scale(1.12) rotate(-4deg)}#toolbar .grp button:hover .ti .f{fill:rgba(255,255,255,.3)}
+#toolbar .grp button:active .tile{transform:scale(.92);box-shadow:none}
+#toolbar .grp button.soonit .tile{filter:grayscale(.8);opacity:.7}
+@media(max-width:980px){#toolbar .grp button{min-width:54px;height:56px}#toolbar .tile{width:42px;height:42px}}
+
+#btnInstall[hidden]{display:none}

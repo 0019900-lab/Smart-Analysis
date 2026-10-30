@@ -1,5 +1,5 @@
 import * as G from './ui-grid.js';import * as F from './files.js';import {store,undo,redo} from './data.js';import {A} from './analyses.js';
-import {initOutput,addText,clearOutput,EXPORT,explainLast} from './output.js';import {T} from './i18n.js';import {letter} from './keys.js';import {ic,mark} from './icons.js';
+import {initOutput,addText,clearOutput,EXPORT,explainLast} from './output.js';import {T} from './i18n.js';import {letter} from './keys.js';import {ic,ti,mark} from './icons.js';
 import {initGuide,openGuide,undocumented} from './guide.js';import {showWelcome,showAbout} from './welcome.js';import {openFind,closeFind} from './find.js';import {CONFIG} from './config.js';
 // Smart-Analysis – القوائم. كل عنصر: [عربي, English, اختصار, أمر, مرحلة] — مرحلة 0 = قريباً بدون موعد محدد
 const S='-';
@@ -60,7 +60,7 @@ document.addEventListener('click',close);
 function buildToolbar(){const t=$('#toolbar');t.innerHTML='';let g=null,gi=-1;const open=()=>{gi++;g=document.createElement('div');g.className='grp g'+gi;t.append(g)};open();
  TB.forEach(i=>{if(i==='|'){open();return}
   const live=!!ACT[i[1]],b=document.createElement('button');b.type='button';
-  b.innerHTML=ic(i[0],26)+`<span class="tl">${T(i[5]||i[2],i[6]||i[3])}</span>`;b.dataset.tip=T(i[2],i[3])+(i[4]?`  ·  ${i[4]}`:'')+(live?'':T('  ·  قريباً','  ·  soon'));
+  b.innerHTML=`<span class="tile">${ti(i[0],28)}</span><span class="tl">${T(i[5]||i[2],i[6]||i[3])}</span>`;b.dataset.tip=T(i[2],i[3])+(i[4]?`  ·  ${i[4]}`:'')+(live?'':T('  ·  قريباً','  ·  soon'));
   b.setAttribute('aria-label',T(i[2],i[3]));if(!live)b.classList.add('soonit');b.onclick=()=>run([i[2],i[3],'',live?i[1]:null,i[7]||0]);g.append(b)})}
 // ---- لوحة الأوامر ----
 let sel=0,items=[];
@@ -84,8 +84,20 @@ addEventListener('keydown',e=>{if(e.isComposing)return;const k=letter(e),ctrl=e.
  if(f){e.preventDefault();e.stopPropagation();f()}},true);
 document.addEventListener('statlab:find',e=>openFind(e.detail));
 // ---- PWA ----
-let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#btnInstall').hidden=false});
-$('#btnInstall').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;$('#btnInstall').hidden=true}};
+let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e});
+const installed=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+if(installed())$('#btnInstall').hidden=true;else $('#btnInstall').hidden=false;
+addEventListener('appinstalled',()=>{$('#btnInstall').hidden=true;say(T('تم تثبيت التطبيق','App installed'))});
+// الضغط: نافذة التثبيت الرسمية إن أتاحها المتصفح، وإلا شرح خطوات التثبيت حسب المتصفح بدل أن لا يحدث شيء
+function installHelp(){if(document.querySelector('.inst'))return;const ua=navigator.userAgent,ios=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),and=/Android/.test(ua),ff=/Firefox/.test(ua)&&!and,secure=location.protocol==='https:'||location.hostname==='localhost';
+ const steps=!secure?T('التثبيت يتطلب اتصالاً آمناً (https). افتح الموقع بعنوان يبدأ بـ https:// ثم أعد المحاولة.','Installing needs a secure connection (https). Open the site with an address starting with https:// and try again.')
+ :ios?T('في Safari: اضغط زر المشاركة (المربع والسهم)، ثم اختر «إضافة إلى الشاشة الرئيسية».','In Safari: tap the Share button (square with arrow), then choose “Add to Home Screen”.')
+ :ff?T('Firefox على الحاسوب لا يدعم تثبيت التطبيقات. افتح الموقع في Chrome أو Edge ثم ثبّته.','Desktop Firefox cannot install apps. Open the site in Chrome or Edge and install it there.')
+ :and?T('في Chrome: اضغط قائمة ⋮ ثم «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية».','In Chrome: tap the ⋮ menu, then “Install app” or “Add to Home screen”.')
+ :T('في Chrome أو Edge: اضغط أيقونة التثبيت في يمين شريط العنوان، أو قائمة ⋮ ثم «تثبيت Smart-Analysis».','In Chrome or Edge: click the install icon at the end of the address bar, or the ⋮ menu → “Install Smart-Analysis”.');
+ const ov=document.createElement('div');ov.className='dlgov inst';ov.innerHTML=`<div class="dlg" dir="${root.dir}" style="width:min(460px,94vw)"><h3>${T('تثبيت Smart-Analysis','Install Smart-Analysis')}</h3><div class="dbody"><p style="margin:0;line-height:1.9">${steps}</p><p style="margin:10px 0 0;color:var(--mute);font-size:12.5px">${T('بعد التثبيت يعمل البرنامج في نافذته الخاصة وحتى دون اتصال.','Once installed it opens in its own window and works offline.')}</p></div><div class="dfoot"><button class="go">${T('حسناً','OK')}</button></div></div>`;
+ document.body.append(ov);const cl=()=>ov.remove();ov.querySelector('.go').onclick=cl;ov.onclick=e=>{if(e.target===ov)cl()};ov.addEventListener('keydown',e=>{if(e.key==='Escape')cl()});ov.querySelector('.go').focus()}
+$('#btnInstall').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null}else installHelp()};
 $('#btnGuide').onclick=()=>ACT.guide();$('#btnDalia').onclick=()=>ACT.askDalia();
 if('serviceWorker'in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js');
 Object.assign(ACT,{new:F.newDoc,open:F.openDialog,save:F.save,exportCsv:F.exportCsv,demo:F.demo,undo:()=>{undo()},redo:()=>{redo()},copy:G.copy,paste:G.paste,...A});

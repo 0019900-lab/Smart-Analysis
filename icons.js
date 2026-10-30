@@ -56,5 +56,19 @@ explain:'<path d="M5 4.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6.5L8 20.5v-4H5a2 2 0
 cog:'<circle cx="12" cy="12" r="3" class="f"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
 export const names=Object.keys(P);
 export const ic=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]||P.info}</svg>`;
+// طقم أيقونات شريط الأدوات (v0.5.1): رسم جديد بالكامل، حواف مستديرة، تعبئة متدرجة + خط متدرج (الألوان من CSS حسب المجموعة)
+const TI={
+new:'<path class="f" d="M6.5 2.8h7l5.2 5.2v11a2.2 2.2 0 0 1-2.2 2.2h-10A2.2 2.2 0 0 1 4.3 19V5A2.2 2.2 0 0 1 6.5 2.8z"/><path d="M13.5 2.8V7a1.2 1.2 0 0 0 1.2 1.2h4"/><path d="M11.5 11.6v5.6M8.7 14.4h5.6"/>',
+open:'<path class="f" d="M2.8 7.2A2.4 2.4 0 0 1 5.2 4.8h3.5c.6 0 1.2.3 1.6.8l.9 1.2h6.8a2.4 2.4 0 0 1 2.4 2.4v.9H2.8z"/><path d="M3.6 10.6h16.8a1 1 0 0 1 1 1.2l-1.5 6.2a2.4 2.4 0 0 1-2.3 1.8H6.4A2.4 2.4 0 0 1 4.1 18L2.6 11.8a1 1 0 0 1 1-1.2z"/>',
+save:'<path class="f" d="M5.6 3h10.3L21 8.1v10.3a2.6 2.6 0 0 1-2.6 2.6H5.6A2.6 2.6 0 0 1 3 18.4V5.6A2.6 2.6 0 0 1 5.6 3z"/><path d="M7.4 3v4.6h6.8V3M7.4 21v-6.4h9.2V21"/>',
+undo:'<path d="M8.6 4.6 4.2 9l4.4 4.4"/><path class="f" d="M4.2 9h9.1a5.7 5.7 0 0 1 0 11.4H9.8"/>',
+redo:'<path d="m15.4 4.6 4.4 4.4-4.4 4.4"/><path class="f" d="M19.8 9h-9.1a5.7 5.7 0 0 0 0 11.4h3.5"/>',
+find:'<circle class="f" cx="10.6" cy="10.6" r="6.6"/><path d="m15.6 15.6 5 5"/><path d="M8 8.4a3.8 3.8 0 0 1 3-1.2"/>',
+cmd:'<rect class="f" x="2.8" y="4" width="18.4" height="16" rx="4.4"/><path d="m7.8 9.6 3 2.4-3 2.4M13 14.6h3.6"/>',
+compute:'<rect class="f" x="4.6" y="2.8" width="14.8" height="18.4" rx="3.4"/><path d="M8.2 7.6h7.6"/><path d="M8.6 12h.01M12 12h.01M15.4 12h.01M8.6 16h.01M12 16h.01M15.4 16h.01" stroke-width="2.3"/>',
+analyze:'<rect class="f" x="3" y="3" width="18" height="18" rx="5.2"/><path d="M16.2 7.6H8.6l4.2 4.4-4.2 4.4h7.6"/>',
+chart:'<rect class="f" x="3.8" y="12.8" width="4" height="7.6" rx="1.4"/><rect class="f" x="10" y="8.6" width="4" height="11.8" rx="1.4"/><rect class="f" x="16.2" y="4" width="4" height="16.4" rx="1.4"/>',
+explain:'<path class="f" d="M5.4 4.2h13.2a2.4 2.4 0 0 1 2.4 2.4v7.8a2.4 2.4 0 0 1-2.4 2.4h-6.1L8 20.6v-3.8H5.4A2.4 2.4 0 0 1 3 14.4V6.6a2.4 2.4 0 0 1 2.4-2.4z"/><path d="m12 7.6.9 2.2 2.2.9-2.2.9-.9 2.2-.9-2.2-2.2-.9 2.2-.9z"/>'};
+export const ti=(n,s=28)=>TI[n]?`<svg class="ic ti" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TI[n]}</svg>`:ic(n,s);
 // علامة Smart-Analysis (الحرف S والأعمدة) كصورة شفافة
 export const mark=(s=26)=>`<img class="mark" src="assets/mark.png" alt="" height="${s}" style="height:${s}px;width:auto">`;
