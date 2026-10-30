@@ -47,6 +47,12 @@ clock:'<circle cx="12" cy="12" r="9" class="f"/><path d="M12 7v5l3 2"/>',
 cmd:'<rect x="3" y="4" width="18" height="16" rx="3" class="f"/><path d="m7 9 3 3-3 3M12 15h5"/>',
 sun:'<circle cx="12" cy="12" r="4.2" class="f"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/>',
 learn:'<path d="M12 7c-1.7-1.6-4.3-2.2-8-2.2v12.4c3.7 0 6.3.6 8 2.2 1.7-1.6 4.3-2.2 8-2.2V10" class="f"/><path d="M12 7v12.4M12 7c-1.7-1.6-4.3-2.2-8-2.2v12.4c3.7 0 6.3.6 8 2.2 1.7-1.6 4.3-2.2 8-2.2V10"/><path d="M18.5 2.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+hist:'<rect x="3.5" y="12" width="4" height="8" rx="1" class="f"/><rect x="9.5" y="5" width="4" height="15" rx="1" class="f"/><rect x="15.5" y="9" width="4" height="11" rx="1" class="f"/><path d="M3 21h18"/>',
+barc:'<path d="M4 3.5V20h16.5"/><rect x="7.5" y="11" width="3.5" height="9" rx="1" class="f"/><rect x="13" y="6" width="3.5" height="14" rx="1" class="f"/>',
+box:'<rect x="7" y="8" width="10" height="8" rx="1.5" class="f"/><path d="M12 3v5M12 16v5M9.5 3h5M9.5 21h5M7 12h10"/>',
+scat:'<path d="M4 3.5V20h16.5"/><circle cx="8.5" cy="14.5" r="1.5" class="f"/><circle cx="12" cy="11" r="1.5" class="f"/><circle cx="15.5" cy="12.5" r="1.5" class="f"/><circle cx="18" cy="7.5" r="1.5" class="f"/><path d="m7 16.5 11-9"/>',
+qqi:'<path d="M4 3.5V20h16.5"/><path d="m6.5 17.5 11-11"/><circle cx="8" cy="15.5" r="1.4" class="f"/><circle cx="11.5" cy="12.5" r="1.4" class="f"/><circle cx="14" cy="10.5" r="1.4" class="f"/><circle cx="17.5" cy="6.5" r="1.4" class="f"/>',
+explain:'<path d="M5 4.5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6.5L8 20.5v-4H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2z" class="f"/><path d="m12 7.8.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9z"/>',
 cog:'<circle cx="12" cy="12" r="3" class="f"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
 export const names=Object.keys(P);
 export const ic=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]||P.info}</svg>`;
