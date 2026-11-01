@@ -97,7 +97,7 @@ initUpdate();
 Object.assign(ACT,{wizard:()=>openWizard(ACT),new:F.newDoc,open:F.openDialog,save:F.save,saveAs:F.saveAs,exportCsv:F.exportCsv,demo:F.demo,undo:()=>{undo()},redo:()=>{redo()},copy:G.copy,paste:G.paste,...A,...TR,...TR2});
 initOutput();initGuide({menus:MENUS,acts:ACT,toolbar:TB,icon:c=>ICON[c]});
 applyLook();G.init();
-const miss=undocumented();if(miss.length)console.warn('Smart-Analysis guide: missing docs for',miss.join(', '));
+const miss=undocumented();if(miss.length)console.warn('StatLab guide: missing docs for',miss.join(', '));
 globalThis.__statlab={ACT,MENUS,undocumented,CONFIG};
 setTimeout(()=>showWelcome(ACT),350);
 addEventListener('beforeunload',e=>{if(store.dirty){e.preventDefault();e.returnValue=''}});
