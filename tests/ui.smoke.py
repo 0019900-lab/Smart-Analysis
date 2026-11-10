@@ -38,7 +38,7 @@ try:
   pg.keyboard.press('Control+f');pg.click('#findbar [data-f=data]');pg.fill('#findbar input','5');pg.wait_for_timeout(450)
   chk('data find count',pg.locator('#findbar .fcnt').inner_text().startswith('1 /'));pg.keyboard.press('Escape')
   # exports
-  for k,ext in [('html','.html'),('word','.doc'),('md','.md'),('xlsx','.xlsx')]:
+  for k,ext in [('html','.html'),('word','.docx'),('md','.md'),('xlsx','.xlsx')]:
    pg.click('.otb [data-k=export]')
    with pg.expect_download(timeout=8000) as d:pg.click(f'.xmenu [data-x={k}]')
    fn=d.value.suggested_filename;chk('export '+k,fn.endswith(ext));d.value.save_as(f'{out}/{fn}')

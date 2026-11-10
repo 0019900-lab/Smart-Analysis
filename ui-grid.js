@@ -91,7 +91,7 @@ export function init(){
  subscribe(k=>{updateDoc();if(view==='data')schedule();else if(k!=='var')renderVars()});
  wrap.addEventListener('scroll',schedule);addEventListener('resize',schedule);
  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setView(b.dataset.view));
- wrap.addEventListener('mousedown',e=>{if(view!=='data'||e.target===ed)return;if(editing)endEdit(true,0,0);
+ wrap.addEventListener('mousedown',e=>{if(e.button===2||view!=='data'||e.target===ed)return;if(editing)endEdit(true,0,0);
   const td=e.target.closest('td[data-r]'),th=e.target.closest('th[data-hc]');
   if(td){const p={r:+td.dataset.r,c:+td.dataset.c};sel=p;if(!e.shiftKey)anc={...p};drag=true;schedule();wrap.focus();e.preventDefault()}
   else if(th){const c=+th.dataset.hc;anc={r:0,c};sel={r:Math.max(store.n-1,0),c};schedule();wrap.focus();e.preventDefault()}});
@@ -116,3 +116,7 @@ export function init(){
  document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||isField(e.target))return;const k=letter(e);
   if(k==='z'){e.preventDefault();e.shiftKey?redo():undo()}else if(k==='y'){e.preventDefault();redo()}});
  updateDoc();render()}
+// واجهة برمجية لقوائم الكليك يمين (ctxmenu.js)
+export const api={rng,view:()=>view,setView,getSel:()=>({sel:{...sel},anc:{...anc}}),
+ setSel(a,s){setView('data');const{R,C}=dims();anc={r:clamp(a.r,0,R-1),c:clamp(a.c,0,C-1)};sel={r:clamp(s.r,0,R-1),c:clamp(s.c,0,C-1)};ensureVisible();render();wrap.focus({preventScroll:true})},
+ clear:()=>clearRange(),edit:()=>startEdit(),cut:()=>{copy();clearRange()}};

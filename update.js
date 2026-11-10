@@ -4,7 +4,7 @@ let reg=null;
 function bar(){if(document.querySelector('.updbar'))return;const d=document.createElement('div');d.className='updbar';d.setAttribute('role','status');
  d.innerHTML=`<span>${T('تم تحديث Smart-Analysis إلى نسخة جديدة. احفظ عملك ثم أعد التحميل لتفعيلها.','Smart-Analysis was updated. Save your work, then reload to use the new version.')}</span><button class="go">${T('إعادة التحميل','Reload')}</button><button class="x" aria-label="×">×</button>`;
  d.querySelector('.go').onclick=()=>location.reload();d.querySelector('.x').onclick=()=>d.remove();document.body.append(d)}
-export function initUpdate(){if(!('serviceWorker'in navigator)||location.protocol==='file:')return;
+export function initUpdate(){if(!('serviceWorker'in navigator)||location.protocol==='file:'||location.protocol==='app:')return;
  const had=!!navigator.serviceWorker.controller;
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)bar()});
  navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>{reg=r;r.update().catch(()=>{});

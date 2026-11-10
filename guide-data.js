@@ -68,6 +68,7 @@ normality:{what:['اختبار شابيرو–ويلك مع الالتواء و�
 about:{what:['معلومات الإصدار والشعار.','Version info and logo.'],how:['—','—']}};
 // قاعدة: «الجديد» للإضافات الجديدة فقط، كل بند بصيغة «الميزة — مكانها» بإيجاز. لا تُكتب الإصلاحات ولا التعديلات. الإصدار الذي لا يضيف ميزة لا سطر له.
 export const CHANGELOG=[
+['0.19.0',['قوائم الكليك يمين: في شبكة البيانات (خلية/عنوان عمود/رقم صف) وVariable View والمخرجات — قص ونسخ ولصق وإدراج وحذف وتكرار وترتيب — زر الفأرة الأيمن أو Shift+F10','Right-click menus in the data grid (cell/column header/row number), Variable View and Output — cut, copy, paste, insert, delete, duplicate, sort — right mouse button or Shift+F10']],
 ['0.18.1',['منشئ التقارير: اختيار عناصر التقرير وترتيبها بالأسهم قبل التصدير — المخرجات ← تصدير ← منشئ التقارير','Report builder: choose and reorder report items before export — Output → Export → Report builder']],
 ['0.18.0',['منشئ التقارير: عنوان ومؤلف ومقدمة وملحق سجل العمليات بصيغة Word أو HTML — المخرجات ← تصدير ← منشئ التقارير','Report builder: title, author, intro and operations-log appendix as Word or HTML — Output → Export → Report builder']],
 ['0.17.2',['سجل العمليات يسجّل أيضاً عمليات تجهيز البيانات (حساب، إعادة ترميز، دمج، ترتيب...) — المخرجات ← تصدير ← سجل العمليات','The operations log now also records data preparation (compute, recode, merge, sort…) — Output → Export → Operations log']],

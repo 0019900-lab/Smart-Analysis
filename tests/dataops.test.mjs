@@ -1,0 +1,12 @@
+import {insertCases,deleteCases,insertVar,deleteVars,duplicateVar,uniqueName} from '../dataops.js';import {mkVar} from '../data.js';
+let ok=0,bad=0;const t=(n,c)=>{c?ok++:(bad++,console.log('FAIL',n))};
+const st=()=>({name:'t',vars:[mkVar('a'),mkVar('b','String')],cols:[[1,2,3,4],['x','y','z','w']],n:4});
+let s=st(),r=insertCases(s,1,2);t('ins n',r.n===6);t('ins a',JSON.stringify(r.cols[0])==='[1,null,null,2,3,4]');t('ins b',JSON.stringify(r.cols[1])==='["x",null,null,"y","z","w"]');t('immutable',s.n===4&&s.cols[0].length===4);
+r=insertCases(s,99,1);t('ins end',r.n===5&&r.cols[0][4]===null&&r.cols[0][3]===4);r=insertCases(s,0,1);t('ins top',r.cols[0][0]===null&&r.cols[0][1]===1);
+r=deleteCases(s,1,2);t('del',r.n===2&&JSON.stringify(r.cols[0])==='[1,4]'&&JSON.stringify(r.cols[1])==='["x","w"]');r=deleteCases(s,3,1);t('del swapped',r.n===1&&r.cols[0][0]===1);r=deleteCases(s,0,99);t('del all',r.n===0);
+r=insertVar(s,1);t('insVar',r.vars.length===3&&r.vars[1].name==='VAR00003'&&r.cols[1].length===4&&r.cols[1].every(v=>v===null)&&r.vars[2].name==='b');
+r=insertVar(s,0,{type:'String'});t('insVar string',r.vars[0].type==='String');
+r=deleteVars(s,0,0);t('delVar',r.vars.length===1&&r.vars[0].name==='b'&&r.cols[0][0]==='x');r=deleteVars(s,0,1);t('delVar all',r.vars.length===0);
+r=duplicateVar(s,0);t('dup',r.vars.length===3&&r.vars[1].name==='a_copy'&&r.cols[1]!==s.cols[0]&&JSON.stringify(r.cols[1])===JSON.stringify(s.cols[0]));
+r=duplicateVar(r,0);t('dup unique',r.vars[1].name==='a_copy_1');t('uniqueName',uniqueName([mkVar('x')],'X')==='X_1'&&uniqueName([],'1abc')==='V1abc');
+console.log(`dataops: ${ok} passed, ${bad} failed`);process.exit(bad?1:0);

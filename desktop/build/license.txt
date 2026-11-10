@@ -1,0 +1,19 @@
+﻿Smart-Analysis — اتفاقية الاستخدام وسياسة الخصوصية / License Agreement and Privacy Policy
+
+[العربية]
+1. الترخيص: يمنحك هذا البرنامج ترخيصاً شخصياً غير حصري لتثبيته واستخدامه على أجهزتك. لا يجوز إعادة بيعه أو تعديل ملفاته التنفيذية أو إزالة حقوق المطوّر.
+2. الخصوصية: يعمل البرنامج بالكامل على جهازك. بياناتك وملفاتك ونتائجك لا تُرسل إلى أي خادم، ولا يجمع البرنامج أي بيانات شخصية أو إحصاءات استخدام.
+3. النتائج الإحصائية: تُحسب النتائج وفق صيغ إحصائية معيارية ومُختبرة، ومع ذلك يتحمل المستخدم مسؤولية اختيار الاختبار المناسب وتفسير النتائج والتحقق منها قبل نشرها أو الاعتماد عليها في قرارات.
+4. إخلاء المسؤولية: يُقدَّم البرنامج «كما هو» دون ضمان من أي نوع، ولا يتحمل المطوّر مسؤولية أي خسارة ناتجة عن استخدامه. احتفظ بنسخ احتياطية من بياناتك.
+5. الروابط الخارجية: قد يفتح البرنامج روابط خارجية في متصفحك (مثل Ask Miss Dalia)، ولها سياساتها الخاصة.
+6. للتواصل: timaxo.apps@gmail.com
+
+[English]
+1. License: You are granted a personal, non-exclusive license to install and use this software on your devices. You may not resell it, modify its executables or remove the developer's notices.
+2. Privacy: The software runs entirely on your computer. Your data, files and results are never sent to any server, and no personal data or usage statistics are collected.
+3. Statistical results: Results are computed with standard, tested formulas; you remain responsible for choosing the right test and for interpreting and verifying results before publishing or relying on them.
+4. Disclaimer: The software is provided "as is" without warranty of any kind, and the developer is not liable for any loss arising from its use. Keep backups of your data.
+5. External links: The software may open external links (such as Ask Miss Dalia) in your browser; they have their own policies.
+6. Contact: timaxo.apps@gmail.com
+
+By clicking "I Agree" you accept these terms. / بالضغط على «أوافق» فإنك توافق على هذه الشروط.

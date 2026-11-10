@@ -65,11 +65,25 @@ export function wilcoxon(x,y){const d=[];let ties=0;for(let i=0;i<x.length;i++){
 export function kruskal(groups){const all=[].concat(...groups),N=all.length,r=ranks(all);let off=0,H=0;const mr=[];for(const g of groups){let s=0;for(let i=0;i<g.length;i++)s+=r[off+i];off+=g.length;mr.push(s/g.length);H+=s*s/g.length}
  H=12/(N*(N+1))*H-3*(N+1);const C=1-tieSum(all)/(N*N*N-N);H=C>0?H/C:NaN;const df=groups.length-1;return{N,df,H,p:pChi(H,df),eps2:H/(N-1),mr,n:groups.map(g=>g.length)}}
 function invert(M){const n=M.length,A=M.map((r,i)=>r.concat(Array.from({length:n},(_,j)=>+(i===j))));for(let c=0;c<n;c++){let p=c;for(let r=c+1;r<n;r++)if(Math.abs(A[r][c])>Math.abs(A[p][c]))p=r;if(Math.abs(A[p][c])<1e-11)return null;[A[c],A[p]]=[A[p],A[c]];const d=A[c][c];for(let j=0;j<2*n;j++)A[c][j]/=d;for(let r=0;r<n;r++)if(r!==c){const f=A[r][c];if(f)for(let j=0;j<2*n;j++)A[r][j]-=f*A[c][j]}}return A.map(r=>r.slice(n))}
-export function linreg(X,y){const n=y.length,k=X.length,p=k+1,dfe=n-p;if(dfe<1)throw new Error('df');const cols=[new Array(n).fill(1),...X],XtX=cols.map(a=>cols.map(b=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*b[i];return s})),Xty=cols.map(a=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*y[i];return s}),inv=invert(XtX);if(!inv)throw new Error('collinear');
- const b=inv.map(r=>r.reduce((s,v,j)=>s+v*Xty[j],0)),ym=y.reduce((s,v)=>s+v,0)/n;let sse=0,sst=0,dw1=0,prev=0;const res=[];for(let i=0;i<n;i++){let f=0;for(let j=0;j<p;j++)f+=b[j]*cols[j][i];const e=y[i]-f;res.push(e);sse+=e*e;sst+=(y[i]-ym)**2;if(i)dw1+=(e-prev)**2;prev=e}
- const ssr=sst-sse,mse=sse/dfe,R2=sst>0?ssr/sst:NaN,F=k&&mse>0?(ssr/k)/mse:NaN,tc=tCrit(.05,dfe),sy=Math.sqrt(sst/(n-1)),co=b.map((bj,j)=>{const se=Math.sqrt(mse*inv[j][j]),t=bj/se,sx=j?Math.sqrt(X[j-1].reduce((s,v)=>s+v,0)/n*0+desc(X[j-1]).var):NaN;return{b:bj,se,t,p:pT2(t,dfe),lo:bj-tc*se,hi:bj+tc*se,beta:j?bj*sx/sy:NaN}});
+// الانحدار الخطي المتعدد. دقة عددية: تُمركَز المتغيرات المستقلة وتُقيَّس داخلياً (ثم تُعاد المعاملات للمقياس الأصلي)،
+// فلا تنهار النتائج مع قيم كبيرة الإزاحة (مثل السنوات 2020 أو الرواتب 1e6) أو صغيرة المقياس — كما تفعل SPSS.
+export function linreg(X,y){const n=y.length,k=X.length,p=k+1,dfe=n-p;if(dfe<1)throw new Error('df');
+ const mu=X.map(a=>a.reduce((s,v)=>s+v,0)/n),sd=X.map((a,j)=>{let q=0;for(let i=0;i<n;i++)q+=(a[i]-mu[j])**2;return Math.sqrt(q/n)});
+ if(sd.some(v=>!(v>0)))throw new Error('collinear');
+ const ym=y.reduce((s,v)=>s+v,0)/n,Z=X.map((a,j)=>a.map(v=>(v-mu[j])/sd[j])),yc=y.map(v=>v-ym),cols=[new Array(n).fill(1),...Z];
+ const XtX=cols.map(a=>cols.map(b=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*b[i];return s})),Xty=cols.map(a=>{let s=0;for(let i=0;i<n;i++)s+=a[i]*yc[i];return s}),invZ=invert(XtX);if(!invZ)throw new Error('collinear');
+ const bz=invZ.map(r=>r.reduce((s,v,j)=>s+v*Xty[j],0));
+ // البواقي والمجاميع في الإحداثيات المركزية (بلا إلغاء كارثي)
+ let sse=0,sst=0,dw1=0,prev=0;const res=[];for(let i=0;i<n;i++){let f=0;for(let j=0;j<p;j++)f+=bz[j]*cols[j][i];const e=yc[i]-f;res.push(e);sse+=e*e;sst+=yc[i]*yc[i];if(i)dw1+=(e-prev)**2;prev=e}
+ // العودة إلى المقياس الأصلي: b = A·bz و (X'X)^-1 = A·invZ·Aᵀ
+ const A=Array.from({length:p},(_,r)=>new Array(p).fill(0));A[0][0]=1;for(let j=1;j<p;j++){A[0][j]=-mu[j-1]/sd[j-1];A[j][j]=1/sd[j-1]}
+ const b=A.map(r=>r.reduce((s,v,j)=>s+v*bz[j],0));b[0]+=ym;
+ const AI=A.map(r=>invZ.map((_,c)=>r.reduce((s,v,m)=>s+v*invZ[m][c],0))),inv=AI.map((r,i)=>A.map((_,j)=>r.reduce((s,v,m)=>s+v*A[j][m],0)));
+ const ssr=sst-sse,mse=sse/dfe,R2=sst>0?ssr/sst:NaN,F=k&&mse>0?(ssr/k)/mse:NaN,tc=tCrit(.05,dfe),sy=Math.sqrt(sst/(n-1)),
+ co=b.map((bj,j)=>{const se=Math.sqrt(mse*inv[j][j]),t=bj/se;return{b:bj,se,t,p:pT2(t,dfe),lo:bj-tc*se,hi:bj+tc*se,beta:j?bj*sd[j-1]*Math.sqrt(n/(n-1))/sy:NaN}});
  let vif=null;if(k>=2){const m=X.map((a,i)=>X.map((c,j)=>i===j?1:corr(a,c))),mi=invert(m);if(mi)vif=mi.map((r,i)=>r[i])}
  return{n,k,dfe,R2,adj:1-(1-R2)*(n-1)/dfe,R:Math.sqrt(Math.max(R2,0)),see:Math.sqrt(mse),F,pF:pF(F,k,dfe),ssr,sse,sst,msr:ssr/k,mse,co,vif,dw:sse>0?dw1/sse:NaN,res}}
+
 export function cronbach(items){const k=items.length,n=items[0].length,V=a=>desc(a).var,tot=Array.from({length:n},(_,i)=>items.reduce((s,a)=>s+a[i],0)),vt=V(tot),alpha=k/(k-1)*(1-items.reduce((s,a)=>s+V(a),0)/vt);
  const rs=[],R=items.map((a,i)=>items.map((c,j)=>i===j?1:corr(a,c))),rbar=R.reduce((s,r,i)=>s+r.reduce((q,v,j)=>q+(i===j?0:v),0),0)/(k*(k-1)),std=k*rbar/(1+(k-1)*rbar);
  const det=items.map((a,i)=>{const rest=tot.map((t,q)=>t-a[q]),vr=V(rest),ci=corr(a,rest);const cov=k>2?(k-1)/(k-2)*(1-items.reduce((s,c,j)=>s+(j===i?0:V(c)),0)/vr):NaN;return{r:corr(a,rest),a:cov,mean:desc(a).mean,sd:desc(a).sd}});return{k,n,alpha,std,det,meanR:rbar}}
@@ -89,7 +103,12 @@ export function shapiroWilk(a){const x=Float64Array.from(a).sort(),n=x.length;if
   const z=(yy-mu)/sg;p=z>0?pNorm2(z)/2:1-pNorm2(z)/2}
  return{W,p,n}}
 // ---------- الانحدار اللوجستي الثنائي (IRLS / نيوتن–رافسون) – المرحلة 5 (الجزء 2) ----------
-export function logistic(X,y,opt={}){const n=y.length,k=X.length,p=k+1,cols=[new Array(n).fill(1),...X],cut=opt.cut??.5;
+// دقة عددية: تُمركَز المتغيرات المستقلة وتُقيَّس داخلياً ثم تُعاد المعاملات والأخطاء المعيارية للمقياس الأصلي،
+// فلا يظهر «فصل تام» زائف مع قيم كبيرة الإزاحة أو صغيرة المقياس.
+export function logistic(X,y,opt={}){const n=y.length,k=X.length,p=k+1,cut=opt.cut??.5;
+ const mu=X.map(a=>a.reduce((s,v)=>s+v,0)/n),sdv=X.map((a,j)=>{let q=0;for(let i=0;i<n;i++)q+=(a[i]-mu[j])**2;return Math.sqrt(q/n)});
+ if(sdv.some(v=>!(v>0)))throw new Error('collinear');
+ const cols=[new Array(n).fill(1),...X.map((a,j)=>a.map(v=>(v-mu[j])/sdv[j]))];
  const n1=y.reduce((s,v)=>s+v,0),n0=n-n1;if(n1===0||n0===0)throw new Error('onevalue');if(n<=p)throw new Error('df');
  let b=new Array(p).fill(0);b[0]=Math.log(n1/n0);let inv=null,conv=false,it=0;
  const lin=bb=>{const e=new Array(n);for(let i=0;i<n;i++){let z=0;for(let j=0;j<p;j++)z+=bb[j]*cols[j][i];e[i]=z}return e};
@@ -106,7 +125,9 @@ export function logistic(X,y,opt={}){const n=y.length,k=X.length,p=k+1,cols=[new
  if(!conv)throw new Error('noconv');
  {const z=lin(b),pr=z.map(prob),H=Array.from({length:p},()=>new Array(p).fill(0));for(let i=0;i<n;i++){const w=pr[i]*(1-pr[i]);for(let a=0;a<p;a++)for(let c=0;c<p;c++)H[a][c]+=w*cols[a][i]*cols[c][i]}inv=invert(H);if(!inv)throw new Error('collinear')}
  const se=b.map((_,j)=>Math.sqrt(inv[j][j]));if(se.some(s=>!Number.isFinite(s))||b.some(v=>Math.abs(v)>25)||se.some(s=>s>1e3))throw new Error('separation');
- const co=b.map((bj,j)=>{const W=(bj/se[j])**2;return{b:bj,se:se[j],wald:W,p:pChi(W,1),or:Math.exp(bj),lo:Math.exp(bj-1.959964*se[j]),hi:Math.exp(bj+1.959964*se[j])}});
+ const A=Array.from({length:p},()=>new Array(p).fill(0));A[0][0]=1;for(let j=1;j<p;j++){A[0][j]=-mu[j-1]/sdv[j-1];A[j][j]=1/sdv[j-1]}
+ const bo=A.map(r=>r.reduce((s,v,j)=>s+v*b[j],0)),AI=A.map(r=>inv.map((_,c)=>r.reduce((s,v,m)=>s+v*inv[m][c],0))),seo=A.map((r,i)=>Math.sqrt(AI[i].reduce((s,v,m)=>s+v*A[i][m],0)));
+ const co=bo.map((bj,j)=>{const W=(bj/seo[j])**2;return{b:bj,se:seo[j],wald:W,p:pChi(W,1),or:Math.exp(bj),lo:Math.exp(bj-1.959964*seo[j]),hi:Math.exp(bj+1.959964*seo[j])}});
  const LL=cur,LL0=n1*Math.log(n1/n)+n0*Math.log(n0/n),m2=-2*LL,m20=-2*LL0,chi=m20-m2,pr=lin(b).map(prob);
  const cs=1-Math.exp((m2-m20)/n),nag=cs/(1-Math.exp(-m20/n)),mcf=1-LL/LL0;
  const cm=[[0,0],[0,0]];for(let i=0;i<n;i++)cm[y[i]][pr[i]>=cut?1:0]++;

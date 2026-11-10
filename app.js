@@ -1,6 +1,6 @@
 import * as G from './ui-grid.js';import * as F from './files.js';import {store,undo,redo} from './data.js';import {A} from './analyses.js';
 import {initOutput,addText,clearOutput,EXPORT,explainLast,setPane,paneOpen} from './output.js';import {T} from './i18n.js';import {startWatch} from './opwatch.js';startWatch();import {letter} from './keys.js';import {openWizard} from './wizard.js';import {TR} from './transform.js';import {TR2} from './prep2.js';import {ic,ti,mark} from './icons.js';
-import {initGuide,openGuide,undocumented} from './guide.js';import {showWelcome,showAbout} from './welcome.js';import {buildMenus as bm} from './menus.js';import {openFind,closeFind} from './find.js';import {CONFIG} from './config.js';import {initUpdate} from './update.js';
+import {initGuide,openGuide,undocumented} from './guide.js';import {showWelcome,showAbout} from './welcome.js';import {buildMenus as bm} from './menus.js';import {openFind,closeFind} from './find.js';import {CONFIG} from './config.js';import {initUpdate} from './update.js';import {initContext} from './ctxmenu.js';import {initDesktop} from './desktop.js';
 // Smart-Analysis – القوائم. كل عنصر: [عربي, English, اختصار, أمر, مرحلة] — مرحلة 0 = قريباً بدون موعد محدد
 const S='-';
 const MENUS=[
@@ -96,7 +96,7 @@ $('#btnGuide').onclick=()=>ACT.guide();$('#btnDalia').onclick=()=>ACT.askDalia()
 initUpdate();
 Object.assign(ACT,{wizard:()=>openWizard(ACT),new:F.newDoc,open:F.openDialog,save:F.save,saveAs:F.saveAs,exportCsv:F.exportCsv,demo:F.demo,undo:()=>{undo()},redo:()=>{redo()},copy:G.copy,paste:G.paste,...A,...TR,...TR2});
 initOutput();initGuide({menus:MENUS,acts:ACT,toolbar:TB,icon:c=>ICON[c]});
-applyLook();G.init();
+applyLook();G.init();initContext(ACT);initDesktop();
 const miss=undocumented();if(miss.length)console.warn('Smart-Analysis guide: missing docs for',miss.join(', '));
 globalThis.__statlab={ACT,MENUS,undocumented,CONFIG};
 setTimeout(()=>showWelcome(ACT),350);

@@ -10,7 +10,7 @@ try:
   b=p.chromium.launch();pg=b.new_page(viewport={'width':1440,'height':860})
   pg.on('console',lambda m:errs.append(m.text) if m.type=='error' else None);pg.on('pageerror',lambda e:errs.append(str(e)))
   pg.goto('http://localhost:8774/index.html');pg.wait_for_selector('.welcome');pg.click('[data-a=demo]');pg.wait_for_function("document.querySelector('#info').textContent.includes('100')",timeout=20000)
-  pg.click('.tab[data-view=var]');pg.wait_for_selector('#varGrid select')
+  pg.click('.tab[data-view=var]');pg.wait_for_selector('#varGrid .vsel')
   chk('Variable View has 11 columns like SPSS',pg.locator('#varGrid thead th').count()==12)  # + '#'
   chk('Type menu has 12 SPSS types',pg.locator('#varGrid tbody tr:first-child select[data-f=type] option').count()==12)
   chk('Align menu',pg.locator('#varGrid tbody tr:first-child select[data-f=align] option').count()==3)

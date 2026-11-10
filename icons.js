@@ -1,5 +1,5 @@
 // Smart-Analysis – مكتبة أيقونات SVG (24px، خط 1.8، ثنائية اللون: خط + تعبئة شفافة)
-const P={
+const P={cut:'<circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/><path d="M8 7.6 20 18M8 16.4 20 6"/>',paste:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/>',eraser:'<path d="M4 16l9-10a2 2 0 0 1 3 0l3 3a2 2 0 0 1 0 3l-7 7H8z"/><path d="M8 20h12"/>',edit:'<path d="M5 19l1-4 10-10 3 3-10 10z"/><path d="M14 7l3 3"/>',plus:'<path d="M12 5v14M5 12h14"/>',sortAsc:'<path d="M7 5v14M4 8l3-3 3 3"/><path d="M14 7h6M14 12h4M14 17h2"/>',sortDesc:'<path d="M7 19V5M4 16l3 3 3-3"/><path d="M14 17h6M14 12h4M14 7h2"/>',tags:'<path d="M3 12V4h8l9 9-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>',
 new:'<path d="M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" class="f"/><path d="M14 3v5h5M12 11v6M9 14h6"/>',
 open:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v1H3z" class="f"/><path d="M3 10h18l-1.6 8.2a2 2 0 0 1-2 1.6H6.6a2 2 0 0 1-2-1.6z"/>',
 save:'<path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" class="f"/><path d="M7 3v5h8V3M7 21v-7h10v7"/>',
