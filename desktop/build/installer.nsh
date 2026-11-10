@@ -2,7 +2,9 @@
 ; Everything that needs MUI2 lives inside the macro (it is expanded after MUI2 is loaded).
 !include LogicLib.nsh
 !include nsDialogs.nsh
+!ifndef BUILD_UNINSTALLER
 Var SerialBox
+!endif
 !macro customWelcomePage
   !insertmacro MUI_PAGE_WELCOME
   Function SerialPageCreate
