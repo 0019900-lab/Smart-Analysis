@@ -6,6 +6,11 @@
 **الاسم:** Smart-Analysis (كان StatLab). امتداد ملف المشروع ما زال `.smart` (وتبقى `.statlab` القديمة مقروءة) للتوافق مع الملفات المحفوظة سابقاً.
 
 
+### v0.19.1 — الواجهة والمُثبّت
+- الوضع الفاتح افتراضي (`app.js`)؛ `pruneMenus` في `desktop.js` يحذف من القوائم أي عنصر بلا أمر ACT والقوائم الفارغة تلقائياً. سطح المكتب: ملء الشاشة عند التشغيل افتراضياً (`settings.json` في userData، تبديل من قائمة عرض أو F11)، وأمر «خروج».
+- المُثبّت: صفحة رقم تسلسلي في `desktop/build/installer.nsh` (الصيغة SMART-NNNN-CCCC، CCCC=(NNNN×7919+1337) mod 10000)، المولّد `tools/serial.mjs`. الرقم الرئيسي: SMART-4949-2468. حماية رادعة فقط (لا تمنع من يفكّك المُثبّت أو يشغّله بـ /S). **صفحة NSIS لم تُجرَّب بعد** (لا makensis في بيئة التطوير).
+- أيقونة جديدة `desktop/build/icon.ico`. اختبار: `tests/ui.desktop.py`.
+
 ### v0.19.0 — الكليك يمين + اختبار الدقة + نسخة الكمبيوتر (للمطوّر القادم)
 - **الدقة:** `tests/validate/` (`gen_ref.py` يولّد `ref.json` من scipy/numpy/mpmath، `accuracy.test.mjs` 2391 فحصاً، `perf.bench.mjs` للأداء). أُصلح خطآن: `linreg` و`logistic` صارا يمركزان ويقيّسان المتغيرات المستقلة داخلياً (كان R² سالباً وفصل تام زائف مع قيم كبيرة الإزاحة/صغيرة المقياس). المرجع scipy لا SPSS نفسه.
 - **الكليك يمين:** `ctxmenu.js` (`showMenu`/`initContext`) و`dataops.js` (إدراج/حذف حالات ومتغيرات، تكرار؛ تُمرَّر عبر `replaceAll` فتُتراجع). `ui-grid.js` يصدّر `api`. الاختبارات: `tests/dataops.test.mjs` و`tests/ui.ctx.py`.
