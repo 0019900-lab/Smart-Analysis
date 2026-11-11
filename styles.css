@@ -667,3 +667,37 @@ html[lang=ar] .msub>.mi .chev{transform:scaleX(-1)}
 #varGrid tr.cx>*,.blk.cx{box-shadow:inset 0 0 0 2px var(--acc);background:var(--acc2)}
 
 .desktop #btnInstall{display:none!important}
+
+/* ===== الإعدادات (settings.js) ===== */
+.gbtn{width:34px;height:34px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;color:var(--mute);border:1px solid var(--line);background:var(--head);transition:all .18s}
+.gbtn:hover{color:var(--acc);background:var(--acc2);transform:rotate(40deg)}
+.stov{z-index:120;backdrop-filter:blur(3px)}
+.stdlg{width:min(860px,95vw);height:min(600px,92vh);display:flex;background:var(--panel);color:var(--text);border-radius:18px;box-shadow:0 24px 80px #0007;overflow:hidden;animation:cmIn .14s ease-out}
+.stnav{width:218px;flex:none;background:var(--head);border-inline-end:1px solid var(--line);padding:14px 10px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+.sthead{display:flex;align-items:center;gap:10px;padding:6px 8px 14px}
+.sthead b{display:block;font-size:15px}.sthead small{color:var(--mute);font-size:11.5px}
+.stlogo{width:38px;height:38px;border-radius:12px;background:var(--grad);color:#fff;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(31,111,235,.35)}
+.sti{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-align:start;color:var(--text);font-weight:600;transition:background .15s}
+.sti svg{color:var(--mute)}.sti:hover{background:var(--hov)}
+.sti.on{background:var(--panel);box-shadow:0 1px 6px rgba(0,0,0,.1),inset 3px 0 0 var(--acc)}.sti.on svg{color:var(--acc)}
+[dir=rtl] .sti.on{box-shadow:0 1px 6px rgba(0,0,0,.1),inset -3px 0 0 var(--acc)}
+.stmain{flex:1;min-width:0;display:flex;flex-direction:column}
+.stph{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--line)}.stph h3{margin:0;font-size:18px}
+.stx{width:32px;height:32px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;color:var(--mute)}.stx:hover{background:var(--hov);color:var(--text)}
+.stbody{flex:1;overflow:auto;padding:18px 22px;display:flex;flex-direction:column;gap:16px}
+.stcard{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+.stcard h4{margin:0;padding:10px 16px;font-size:12.5px;letter-spacing:.3px;color:var(--mute);background:var(--head);border-bottom:1px solid var(--line)}
+.strow{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 16px;border-bottom:1px solid var(--line)}.strow:last-child{border-bottom:0}
+.stl{min-width:0;flex:1}.stl b{display:block;font-weight:700}.stl small{display:block;margin-top:3px;color:var(--mute);line-height:1.55}
+.stc{flex:none;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:56%}
+.strow.col{flex-direction:column;align-items:stretch;gap:10px}.strow.col .stc{max-width:none;justify-content:flex-start}
+.stseg{flex-wrap:wrap}.stseg button{height:30px;padding:0 14px;white-space:nowrap}
+.stpath{display:block;max-width:100%;padding:8px 10px;border-radius:8px;background:var(--head);border:1px solid var(--line);font:12.5px/1.5 Consolas,monospace;word-break:break-all;user-select:all}
+.stbtns{display:flex;gap:8px;flex-wrap:wrap}
+.stb{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-weight:600;transition:all .15s}
+.stb:hover{background:var(--hov)}.stb.pri{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(31,111,235,.35)}
+.stb.dg{color:#d92d20;border-color:rgba(217,45,32,.45)}.stb.dg:hover,.stb.arm{background:#d92d20;color:#fff;border-color:#d92d20}
+.stft{display:flex;align-items:center;gap:10px;padding:12px 22px;border-top:1px solid var(--line)}.stfsp{flex:1}
+.stmsg{color:var(--ok);font-weight:700;opacity:0;transition:opacity .25s}.stmsg.on{opacity:1}
+.stabout{display:flex;gap:16px;align-items:center;padding:16px;border-bottom:1px solid var(--line)}.stabout h3{margin:0 0 4px}.stabout p{margin:8px 0 0;color:var(--mute);line-height:1.6}
+@media(max-width:640px){.stdlg{flex-direction:column;height:94vh}.stnav{width:auto;flex-direction:row;overflow-x:auto;border-inline-end:0;border-bottom:1px solid var(--line)}.sthead{display:none}.stc{max-width:none}}

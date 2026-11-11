@@ -6,6 +6,9 @@
 **الاسم:** Smart-Analysis (كان StatLab). امتداد ملف المشروع ما زال `.smart` (وتبقى `.statlab` القديمة مقروءة) للتوافق مع الملفات المحفوظة سابقاً.
 
 
+### v0.20.0 — الإعدادات
+- `settings.js` (نافذة إعدادات: عام/النافذة/التخزين/إزالة التثبيت/حول، تُفتح بـ Ctrl+, أو زر الترس أو ملف←الإعدادات). `localStorage.themePref` = light|dark|system|last (الافتراضي light). سطح المكتب: `startMode` = maximized (افتراضي، بإطار وأزرار)|fullscreen|windowed في `settings.json`؛ IPC جديد في `desktop/main.cjs` (storage-info, clear-cache, clear-data, uninstall…). اختبار: `tests/ui.settings.py`. إزالة التثبيت تستدعي `Uninstall Smart-Analysis.exe` بجوار الـ exe.
+
 ### v0.19.1 — الواجهة والمُثبّت
 - الوضع الفاتح افتراضي (`app.js`)؛ `pruneMenus` في `desktop.js` يحذف من القوائم أي عنصر بلا أمر ACT والقوائم الفارغة تلقائياً. سطح المكتب: ملء الشاشة عند التشغيل افتراضياً (`settings.json` في userData، تبديل من قائمة عرض أو F11)، وأمر «خروج».
 - المُثبّت: صفحة رقم تسلسلي في `desktop/build/installer.nsh` (الصيغة SMART-NNNN-CCCC، CCCC=(NNNN×7919+1337) mod 10000)، المولّد `tools/serial.mjs`. الرقم الرئيسي: SMART-4949-2468. حماية رادعة فقط (لا تمنع من يفكّك المُثبّت أو يشغّله بـ /S). **صفحة NSIS لم تُجرَّب بعد** (لا makensis في بيئة التطوير).

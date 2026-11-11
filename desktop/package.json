@@ -1,6 +1,6 @@
 {
   "name": "smart-analysis-desktop",
-  "version": "0.19.1",
+  "version": "0.20.0",
   "description": "Smart-Analysis",
   "author": "Timaxo <timaxo.apps@gmail.com>",
   "main": "main.cjs",

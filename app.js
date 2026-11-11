@@ -1,6 +1,6 @@
 import * as G from './ui-grid.js';import * as F from './files.js';import {store,undo,redo} from './data.js';import {A} from './analyses.js';
 import {initOutput,addText,clearOutput,EXPORT,explainLast,setPane,paneOpen} from './output.js';import {T} from './i18n.js';import {startWatch} from './opwatch.js';startWatch();import {letter} from './keys.js';import {openWizard} from './wizard.js';import {TR} from './transform.js';import {TR2} from './prep2.js';import {ic,ti,mark} from './icons.js';
-import {initGuide,openGuide,undocumented} from './guide.js';import {showWelcome,showAbout} from './welcome.js';import {buildMenus as bm} from './menus.js';import {openFind,closeFind} from './find.js';import {CONFIG} from './config.js';import {initUpdate} from './update.js';import {initContext} from './ctxmenu.js';import {initDesktop,pruneMenus} from './desktop.js';
+import {initGuide,openGuide,undocumented} from './guide.js';import {showWelcome,showAbout} from './welcome.js';import {buildMenus as bm} from './menus.js';import {openFind,closeFind} from './find.js';import {CONFIG} from './config.js';import {initUpdate} from './update.js';import {initContext} from './ctxmenu.js';import {initDesktop,pruneMenus} from './desktop.js';import {openSettings} from './settings.js';
 // Smart-Analysis – القوائم. كل عنصر: [عربي, English, اختصار, أمر, مرحلة] — مرحلة 0 = قريباً بدون موعد محدد
 const S='-';
 const MENUS=[
@@ -22,13 +22,13 @@ const ICON={new:'new',open:'open',save:'save',saveAs:'save',exportHtml:'html',ex
 // شريط الأدوات: [أيقونة، أمر، عربي، English، اختصار]
 const TB=[['new','new','جديد','New','Alt+N','جديد','New'],['open','open','فتح','Open','Ctrl+O','فتح','Open'],['save','save','حفظ','Save','Ctrl+S','حفظ','Save'],'|',['undo','undo','تراجع','Undo','Ctrl+Z','تراجع','Undo'],['redo','redo','إعادة','Redo','Ctrl+Y','إعادة','Redo'],'|',['find','find','بحث','Find','Ctrl+F','بحث','Find'],['cmd','palette','لوحة الأوامر','Command palette','Ctrl+K','الأوامر','Commands'],'|',['compute','compute','حساب متغير','Compute Variable','','حساب','Compute'],['analyze','descriptives','إحصاء وصفي','Descriptives','','وصفي','Describe'],['chart','graphs','الرسوم البيانية','Charts','','رسوم','Charts'],['explain','explain','فسّر نتائجي','Explain my results','Alt+E','فسّر','Explain']];
 const $=s=>document.querySelector(s),root=document.documentElement;
-let lang=localStorage.lang||'ar',theme=localStorage.theme||'light';
+let lang=localStorage.lang||'ar',themePref=localStorage.themePref||'light',theme=themePref==='dark'?'dark':themePref==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):themePref==='last'?(localStorage.theme||'light'):'light';
 root.lang=lang;
 function say(t){$('#status').textContent=t}
 function applyLook(){root.dataset.theme=theme;root.lang=lang;root.dir=lang==='ar'?'rtl':'ltr';localStorage.lang=lang;localStorage.theme=theme;
  $('#titlebar .brand').innerHTML=mark(58)+'<span class="wm"><b>Smart</b><i>-Analysis</i></span>';
- $('#tbCtl').innerHTML=`<div class="seg" role="group" aria-label="${T('اللغة','Language')}"><button data-l="ar" class="${lang==='ar'?'on':''}" title="العربية (Alt+L)">ع</button><button data-l="en" class="${lang==='en'?'on':''}" title="English (Alt+L)">EN</button></div><button class="swt ${theme}" id="btnTheme" role="switch" aria-checked="${theme==='dark'}" title="${T('الوضع الفاتح / الداكن','Light / dark mode')} (Alt+D)"><span class="k">${ic(theme==='dark'?'theme':'sun',14)}</span><span class="s">${ic('sun',13)}</span><span class="m">${ic('theme',13)}</span></button>`;
- $('#tbCtl').querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{if(b.dataset.l!==lang){lang=b.dataset.l;applyLook()}});$('#btnTheme').onclick=()=>ACT.theme();
+ $('#tbCtl').innerHTML=`<div class="seg" role="group" aria-label="${T('اللغة','Language')}"><button data-l="ar" class="${lang==='ar'?'on':''}" title="العربية (Alt+L)">ع</button><button data-l="en" class="${lang==='en'?'on':''}" title="English (Alt+L)">EN</button></div><button class="gbtn" id="btnSettings" title="${T('الإعدادات','Settings')} (Ctrl+,)" aria-label="${T('الإعدادات','Settings')}">${ic('gear',17)}</button><button class="swt ${theme}" id="btnTheme" role="switch" aria-checked="${theme==='dark'}" title="${T('الوضع الفاتح / الداكن','Light / dark mode')} (Alt+D)"><span class="k">${ic(theme==='dark'?'theme':'sun',14)}</span><span class="s">${ic('sun',13)}</span><span class="m">${ic('theme',13)}</span></button>`;
+ $('#tbCtl').querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{if(b.dataset.l!==lang){lang=b.dataset.l;applyLook()}});$('#btnTheme').onclick=()=>ACT.theme();$('#btnSettings').onclick=()=>ACT.settings();
  $('#btnGuide').innerHTML=ic('learn',18)+`<span>${T('الدليل','Guide')}</span>`;$('#btnDalia').innerHTML=`<img src="assets/dalia-128.png" width="38" height="38" alt=""><span>${T('اسأل Miss Dalia','Ask Miss Dalia')}</span>`;$('#btnDalia').title=T('Ask Miss Dalia — اسأل واحصل على إجابة','Ask Miss Dalia');$('#btnDalia').setAttribute('aria-label','Ask Miss Dalia');$('#btnGuide').title=T('دليل الاستخدام (F1)','User guide (F1)');
  document.querySelectorAll('.tab').forEach(b=>{const v=b.dataset.view==='data';b.innerHTML=lang==='ar'?`${v?'عرض البيانات':'عرض المتغيرات'} <small>${v?'Data View':'Variable View'}</small>`:(v?'Data View':'Variable View')});
  buildMenus();buildToolbar();$('#outputPane').relang();G.refresh&&G.refresh();
@@ -72,7 +72,8 @@ addEventListener('keydown',e=>{if(e.isComposing)return;const k=letter(e),ctrl=e.
  let f=null;
  if(e.key==='F1')f=()=>ACT.guide();
  else if(ctrl&&e.shiftKey&&!e.altKey&&k==='s')f=()=>ACT.saveAs();
- else if(ctrl&&!e.shiftKey&&!e.altKey){f={k:()=>openPal(),f:()=>openFind(),s:()=>ACT.save(),o:()=>ACT.open()}[k]}
+ else if(ctrl&&!e.shiftKey&&!e.altKey&&e.key===','){f=()=>ACT.settings()}
+  else if(ctrl&&!e.shiftKey&&!e.altKey){f={k:()=>openPal(),f:()=>openFind(),s:()=>ACT.save(),o:()=>ACT.open()}[k]}
  else if(alt){f={d:()=>ACT.theme(),l:()=>ACT.lang(),o:()=>ACT.pane(),w:()=>ACT.outputWide(),n:()=>ACT.new(),e:()=>ACT.explain(),t:()=>ACT.wizard()}[k]}
  else if(e.key==='Escape')close();
  if(f){e.preventDefault();e.stopPropagation();f()}},true);
@@ -96,6 +97,7 @@ $('#btnGuide').onclick=()=>ACT.guide();$('#btnDalia').onclick=()=>ACT.askDalia()
 initUpdate();
 Object.assign(ACT,{wizard:()=>openWizard(ACT),new:F.newDoc,open:F.openDialog,save:F.save,saveAs:F.saveAs,exportCsv:F.exportCsv,demo:F.demo,undo:()=>{undo()},redo:()=>{redo()},copy:G.copy,paste:G.paste,...A,...TR,...TR2});
 initOutput();initGuide({menus:MENUS,acts:ACT,toolbar:TB,icon:c=>ICON[c]});
+ACT.settings=()=>openSettings(ACT);ACT.setTheme=t=>{theme=t;applyLook()};ACT.setLang=l=>{lang=l;applyLook()};MENUS.find(m=>m[0]==='ملف')[2].push(['الإعدادات...','Settings...','Ctrl+,','settings',0]);
 initDesktop(ACT,say,T,MENUS);pruneMenus(MENUS,ACT);applyLook();G.init();initContext(ACT);
 const miss=undocumented();if(miss.length)console.warn('Smart-Analysis guide: missing docs for',miss.join(', '));
 globalThis.__statlab={ACT,MENUS,undocumented,CONFIG};

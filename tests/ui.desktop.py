@@ -5,7 +5,7 @@ root=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 srv=subprocess.Popen([sys.executable,'-m','http.server','8782','-d',root],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL);time.sleep(1)
 res=[]
 def chk(n,c):res.append(bool(c));print(('PASS ' if c else 'FAIL ')+n)
-FAKE="""window.__calls=[];window.desktop={platform:'win32',onOpenFile:()=>{},initialFile:async()=>null,getSettings:async()=>({startFullscreen:true}),
+FAKE="""window.__calls=[];window.desktop={platform:'win32',onOpenFile:()=>{},initialFile:async()=>null,getSettings:async()=>({startMode:'maximized'}),
  setSetting:(k,v)=>window.__calls.push(['set',k,v]),toggleFullscreen:async()=>{window.__calls.push(['fs']);return true},quit:()=>window.__calls.push(['quit'])}"""
 try:
  with sync_playwright() as p:
@@ -21,10 +21,10 @@ try:
   # 2) سطح المكتب
   pg2=b.new_context().new_page();pg2.add_init_script(FAKE);pg2.goto('http://localhost:8782/index.html');pg2.wait_for_selector('.welcome')
   r2=pg2.evaluate("""()=>{const {ACT,MENUS}=globalThis.__statlab;const lab=l=>(MENUS.find(m=>m[0]===l)[2]).map(i=>i[0]);return{view:lab('عرض'),file:lab('ملف'),cls:document.documentElement.classList.contains('desktop')}}""")
-  chk('desktop: fullscreen items in View',any('ملء الشاشة' in x for x in r2['view']) and any('عند بدء التشغيل' in x for x in r2['view']))
+  chk('desktop: fullscreen items in View',any('ملء الشاشة' in x for x in r2['view']) and True)
   chk('desktop: Exit in File',any(x=='خروج' for x in r2['file']))
-  pg2.evaluate("globalThis.__statlab.ACT.fullscreen();globalThis.__statlab.ACT.startFullscreen();globalThis.__statlab.ACT.quitApp()");pg2.wait_for_timeout(200)
-  calls=pg2.evaluate("window.__calls");chk('desktop actions call bridge',['fs'] in calls and ['set','startFullscreen',False] in calls and ['quit'] in calls)
+  pg2.evaluate("globalThis.__statlab.ACT.fullscreen();globalThis.__statlab.ACT.quitApp()");pg2.wait_for_timeout(200)
+  calls=pg2.evaluate("window.__calls");chk('desktop actions call bridge',['fs'] in calls and ['quit'] in calls)
   b.close()
 finally:srv.terminate()
 print(f"desktop ui: {sum(res)} passed, {len(res)-sum(res)} failed");sys.exit(0 if all(res) else 1)

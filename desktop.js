@@ -6,10 +6,8 @@ export function pruneMenus(MENUS,ACT){for(let k=MENUS.length-1;k>=0;k--){const m
  if(!m[2].length&&m[0]!=='مساعدة')MENUS.splice(k,1)}}
 export function initDesktop(ACT,say,T,MENUS){const d=window.desktop;if(!d)return;document.documentElement.classList.add('desktop');
  const open=o=>{if(o&&o.data)openFile(new File([o.data],o.name))};d.onOpenFile(open);d.initialFile().then(open).catch(()=>{});
- let startFull=true;d.getSettings().then(s=>{startFull=s.startFullscreen!==false}).catch(()=>{});
  ACT.fullscreen=()=>d.toggleFullscreen().then(f=>say(T(f?'ملء الشاشة (F11 للرجوع)':'نافذة عادية','Fullscreen (F11 to exit)')));
- ACT.startFullscreen=()=>{startFull=!startFull;d.setSetting('startFullscreen',startFull);say(T(startFull?'سيفتح البرنامج بملء الشاشة عند التشغيل':'سيفتح البرنامج في نافذة عادية عند التشغيل',startFull?'The app will start in fullscreen':'The app will start in a normal window'))};
  ACT.quitApp=()=>d.quit();
  const add=(label,items)=>{const m=MENUS.find(x=>x[0]===label);m&&Array.isArray(m[2])&&m[2].push(...items)};
- add('عرض',[['ملء الشاشة','Fullscreen','F11','fullscreen',0],['ملء الشاشة عند بدء التشغيل (تشغيل/إيقاف)','Start in fullscreen (on/off)','','startFullscreen',0]]);
+ add('عرض',[['ملء الشاشة','Fullscreen','F11','fullscreen',0]]);
  add('ملف',[['خروج','Exit','Alt+F4','quitApp',0]])}
